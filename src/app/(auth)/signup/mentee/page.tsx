@@ -1,5 +1,6 @@
 'use client';
 
+import Button from '@/app/_components/common/Button';
 import { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
@@ -52,13 +53,19 @@ const MenteeSignUpPage = () => {
       console.log('supabaseTableError =>', supabaseTableError);
     }
 
+    if (!data.user) {
+      console.error('사용자 생성에 실패했습니다. 데이터가 없습니다.');
+      return; // 데이터가 없을 경우 종료
+    }
+
     const { error } = await supabase.from('auth').insert({
       user_id: formData.user_id,
       user_pw: formData.user_pw,
       user_type: 'mentee',
       email: formData.email,
       user_name: formData.user_name,
-      image_url: formData.image_url
+      image_url: formData.image_url,
+      id: data.user.id
     });
 
     if (error) {
@@ -118,7 +125,14 @@ const MenteeSignUpPage = () => {
           />
           {formState.errors.email && <span>{formState.errors.email.message}</span>}
         </div>
-        <button type="submit">회원가입</button>
+        <Button
+          onClick={() => {
+            console.log('회원가입 폼 제출됨');
+          }}
+          type="submit"
+        >
+          회원가입
+        </Button>
       </form>
     </section>
   );
