@@ -98,9 +98,10 @@ const MentoSignUpPage = () => {
       <h3>아래에 가입정보를 작성해주세요.</h3>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label>아이디</label>
+          <label htmlFor="user_id">아이디</label>
           <input
             {...register('user_id')}
+            id="user_id"
             type="text"
             name="user_id"
             value={formData.user_id}
@@ -109,9 +110,10 @@ const MentoSignUpPage = () => {
           />
         </div>
         <div>
-          <label>비밀번호</label>
+          <label htmlFor="user_pw">비밀번호</label>
           <input
             {...register('user_pw')}
+            id="user_pw"
             type="password"
             name="user_pw"
             value={formData.user_pw}
@@ -120,9 +122,10 @@ const MentoSignUpPage = () => {
           />
         </div>
         <div>
-          <label>닉네임</label>
+          <label htmlFor="user_name">닉네임</label>
           <input
             {...register('user_name')}
+            id="user_name"
             type="text"
             name="user_name"
             value={formData.user_name}
@@ -131,9 +134,10 @@ const MentoSignUpPage = () => {
           />
         </div>
         <div>
-          <label>이메일</label>
+          <label htmlFor="email">이메일</label>
           <input
             {...register('email')}
+            id="email"
             type="email"
             name="email"
             value={formData.email}
