@@ -1,8 +1,11 @@
-import { createStore } from 'zustand';
+import { create, createStore } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type AuthStore = {
+type AuthState = {
   isLoggedIn: boolean;
+  loading: boolean; // 로딩
+  setLoading: (loading: boolean) => void;
+  error: string | null; // 에러
   login: () => void;
   logout: () => void;
 
@@ -14,12 +17,15 @@ type AuthStore = {
   setUserType: (userType: string) => void;
 };
 
-const useAuthStore = createStore(
-  persist<AuthStore>(
+export const useAuthStore = create(
+  persist<AuthState>(
     (set) => ({
       isLoggedIn: false,
+      loading: false,
+      setLoading: (loading: boolean) => set({ loading }),
+      error: null,
       login: () => set({ isLoggedIn: true }),
-      logout: () => set({}),
+      logout: () => set({ isLoggedIn: false, userId: null, userName: null, userType: null }),
       userId: null,
       setUserId: (userId: string) => set({ userId: userId }),
       userName: null,

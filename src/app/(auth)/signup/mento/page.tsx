@@ -3,14 +3,26 @@
 import Button from '@/app/_components/common/Button';
 import browserClient, { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import useAuthStore from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
 
 const MentoSignUpPage = () => {
+  const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
+
+  // 이미 로그인한 사용자인지 구분해서 접근막기
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace('/');
+    }
+  }, [isLoggedIn, router]);
+
   //zod
   const signUpSchema = z.object({
     user_id: z

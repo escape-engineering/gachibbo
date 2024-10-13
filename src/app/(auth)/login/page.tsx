@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FormEvent, useState } from 'react';
+import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -9,8 +9,19 @@ import Button from '@/app/_components/common/Button';
 import { createClient } from '@/utils/supabase/client';
 import Input from '@/app/_components/common/Input';
 import useAuthStore from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
+  const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
+
+  // 이미 로그인한 사용자인지 구분해서 접근막기
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace('/');
+    }
+  }, [isLoggedIn, router]);
+
   // zod
   const signInSchema = z.object({
     user_id: z.string().min(1, '아이디는 필수입니다.'),
@@ -22,7 +33,13 @@ const LoginPage = () => {
     mode: 'onChange',
     defaultValues: {
       user_id: '',
-      user_pw: ''
+      user_pw: '',
+      email: '',
+      user_type: '',
+      user_name: '',
+      image_url: '',
+      mento_current: false,
+      mento_work_experience: ''
     },
     resolver: zodResolver(signInSchema)
   });
@@ -50,6 +67,8 @@ const LoginPage = () => {
 
     if (userError || !userData) {
       console.log('사용자정보가 없습니다. => ', userError);
+      setLoading(false); // 로딩 종료
+      return;
     }
 
     // 위에서 가져온 이메일로 로그인
