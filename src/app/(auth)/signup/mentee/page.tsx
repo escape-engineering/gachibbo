@@ -1,9 +1,9 @@
 'use client';
 
 import Button from '@/app/_components/common/Button';
-import { createClient } from '@/utils/supabase/client';
+import browserClient from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -32,7 +32,6 @@ const MenteeSignUpPage = () => {
 
   // 프로필 이미지 등록 핸들러
   const handleImgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const supabase = createClient();
     const file = e.target.files?.[0];
 
     if (!file) {
@@ -40,7 +39,7 @@ const MenteeSignUpPage = () => {
       return;
     }
 
-    const { data: imgData, error: imgError } = await supabase.storage
+    const { data: imgData, error: imgError } = await browserClient.storage
       .from('profile_img')
       .upload(`${user_id}/${image_url}`, file, {
         cacheControl: '3600',
@@ -76,10 +75,8 @@ const MenteeSignUpPage = () => {
 
   // 폼 제출 함수
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
-    const supabase = createClient();
-
     // Supabase에 사용자 등록
-    const { data, error: supabaseTableError } = await supabase.auth.signUp({
+    const { data, error: supabaseTableError } = await browserClient.auth.signUp({
       email: formData.email,
       password: formData.user_pw
     });
@@ -94,7 +91,7 @@ const MenteeSignUpPage = () => {
       return;
     }
 
-    const { error } = await supabase.from('auth').insert({
+    const { error } = await browserClient.from('auth').insert({
       user_id: formData.user_id,
       user_pw: formData.user_pw,
       user_type: 'mentee',

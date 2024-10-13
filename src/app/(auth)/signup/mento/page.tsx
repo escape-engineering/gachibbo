@@ -1,9 +1,9 @@
 'use client';
 
 import Button from '@/app/_components/common/Button';
-import { createClient } from '@/utils/supabase/client';
+import browserClient, { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -11,17 +11,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
 const MentoSignUpPage = () => {
-  const [formData, setFormData] = useState({
-    user_id: '',
-    user_pw: '',
-    user_type: 'mentee',
-    email: '',
-    user_name: '',
-    image_url: '',
-    mento_current: false,
-    mento_work_experience: ''
-  });
-
   //zod
   const signUpSchema = z.object({
     user_id: z
@@ -83,10 +72,8 @@ const MentoSignUpPage = () => {
 
   // 폼 제출 함수
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
-    const supabase = createClient();
-
     // Supabase에 사용자 등록
-    const { data, error: supabaseTableError } = await supabase.auth.signUp({
+    const { data, error: supabaseTableError } = await browserClient.auth.signUp({
       email: formData.email,
       password: formData.user_pw
     });
@@ -100,7 +87,7 @@ const MentoSignUpPage = () => {
       return;
     }
 
-    const { error } = await supabase.from('auth').insert({
+    const { error } = await browserClient.from('auth').insert({
       user_id: formData.user_id,
       user_pw: formData.user_pw,
       user_type: 'mento',
