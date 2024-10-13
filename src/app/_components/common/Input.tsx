@@ -8,6 +8,7 @@ interface InputType {
   type?: string;
   value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void | ((id: number) => void);
+  required?: boolean;
 }
 
 const Input = ({
