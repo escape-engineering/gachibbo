@@ -2,6 +2,8 @@
 'use client';
 import { createClient } from '../../utils/supabase/client';
 import { useEffect, useState } from 'react';
+import productList from '../../../db.json';
+import { product } from '@/type/types';
 
 const PointStorePage = () => {
   const supabase = createClient();
@@ -65,9 +67,20 @@ const PointStorePage = () => {
           <h3>추천 상품</h3>
         </div>
       </div>
-      <session></session>
+      <div className="w-10/12 h-auto">
+        {productList.products.map((product: product) => {
+          return (
+            <ul key={product.name} className="w-25 h-auto ">
+              <li>{product.name}</li>
+              <img src={product.image} className="w-25 h-[10px]" />
+              <li>{product.price}</li>
+              <button>구매하기</button>
+            </ul>
+          );
+        })}
+      </div>
       <div>내 포인트 : {points}</div>
-      <button onClick={() => buyProduct()} className="border-solid border-2 border-black-600">
+      <button onClick={() => buyProduct()} className="border-solid border-2 border-black">
         상품, 포인트 차감 : 1p
       </button>
     </>
