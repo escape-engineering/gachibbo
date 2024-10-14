@@ -21,7 +21,7 @@ const PointStorePage = () => {
       const { data, error } = await supabase
         .from('point')
         .select('user_point')
-        .eq('user_id', '1fe39a95-d9dd-473b-9140-db0b978dfe2f');
+        .eq('user_id', '06fd23a5-df17-4105-a04d-68f7306d9edc');
       if (error) {
         console.error('Error fetching data getPoint : ', error.message);
       } else if (data) {
@@ -29,31 +29,29 @@ const PointStorePage = () => {
         setPoints(data[0]?.user_point);
         return data[0]?.user_point;
       }
-    }; //params로 가져오기, middleware 써서 api 중 로그인한 사용자의 id 값 가져오는 api 있음
+    };
+    //params로 가져오기, middleware 써서 api 중 로그인한 사용자의 id 값 가져오는 api 있음
     //id값 하나 지정해서 가져오게 해서 사용하기
     getPoint();
   }, []);
 
-  useEffect(() => {
-    const updatePoint = async () => {
-      const { data, error } = await supabase
-        .from('point')
-        .update({ user_point: points })
-        .eq('user_id', '1fe39a95-d9dd-473b-9140-db0b978dfe2f')
-        .select('user_point');
-      if (error) {
-        console.error('Error updating data updataPoint : ', error.message);
-      } else if (data) {
-        console.log('업데이트 완료 : ', data);
-      }
-      console.log('업데이트데이터 : ', data); // 함수 정상 작동
-    };
-    updatePoint();
+  const updatePoint = async (price: number) => {
+    const { data, error } = await supabase
+      .from('point')
+      .update({ user_point: points })
+      .eq('user_id', '06fd23a5-df17-4105-a04d-68f7306d9edc')
+      .select('user_point');
+    if (error) {
+      console.error('Error updating data updataPoint : ', error.message);
+    } else if (data) {
+      console.log('업데이트 완료 : ', data);
+    }
+    console.log('업데이트데이터 : ', data); // 함수 정상 작동
     console.log('Current points:', typeof points, points);
-  }, [points]);
-
-  const buyProduct = () => {
-    setPoints(points - 1);
+    const buyProduct = (price: number) => {
+      setPoints(points - price);
+    };
+    buyProduct(price);
   };
 
   return (
@@ -67,26 +65,23 @@ const PointStorePage = () => {
           <h3>추천 상품</h3>
         </div>
       </div>
-      <div className="w-10/12 h-auto">
+      <div className="w-10/12 h-auto grid grid-cols-5 border-solid border-2 border-black gap-4	">
         {productList.products.map((product: product) => {
           return (
-            <ul key={product.name} className="w-25 h-auto ">
+            <ul key={product.name} className="w-22 h-auto border-solid border-2 border-black ">
               <li>{product.name}</li>
-              <img src={product.image} className="w-25 h-[10px]" />
+              <img src={product.image} />
               <li>{product.price}</li>
-              <button>구매하기</button>
+              <button onClick={() => updatePoint(product.price)}>구매하기</button>
             </ul>
           );
         })}
       </div>
       <div>내 포인트 : {points}</div>
-      <button onClick={() => buyProduct()} className="border-solid border-2 border-black">
+      {/* <button onClick={() => buyProduct()} className="border-solid border-2 border-black">
         상품, 포인트 차감 : 1p
-      </button>
+      </button> */}
     </>
   );
 };
 export default PointStorePage;
-
-//포인트 지급 기능
-//point state를 만들어서 supabase db에 넣는다
