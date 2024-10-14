@@ -1,7 +1,9 @@
+'use client';
+
 import React from 'react';
 
-const techInterviewGranage = () => {
-  return <div>techInterviewGranage</div>;
+const TechInterviewGranage = () => {
+  return <div>TechInterviewGranage</div>;
 };
 
-export default techInterviewGranage;
+export default TechInterviewGranage;
