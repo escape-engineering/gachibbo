@@ -1,6 +1,6 @@
 'use client'
 
-import { createCli } from '@/api/subabase';
+import {createC}
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
