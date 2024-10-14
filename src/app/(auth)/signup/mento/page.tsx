@@ -40,7 +40,7 @@ const MentoSignUpPage = () => {
   });
 
   // 리액트 훅 폼으로 유효성 검사
-  const { register, handleSubmit, formState, setValue } = useForm({
+  const { register, handleSubmit, formState, setValue, watch } = useForm({
     mode: 'onChange',
     defaultValues: {
       user_id: '',
@@ -55,23 +55,12 @@ const MentoSignUpPage = () => {
     resolver: zodResolver(signUpSchema)
   });
 
-  type FormData = {
-    user_id: string;
-    user_pw: string;
-    user_type: string;
-    email: string;
-    user_name: string;
-    image_url: string;
-    mento_current: boolean;
-    mento_work_experience: string;
-  };
-
   // 폼 제출 함수
-  const onSubmit: SubmitHandler<FormData> = async (formData) => {
+  const onSubmit = async () => {
     // Supabase에 사용자 등록
     const { data, error: supabaseTableError } = await browserClient.auth.signUp({
-      email: formData.email,
-      password: formData.user_pw
+      email: watch('email'),
+      password: watch('user_pw')
     });
 
     if (supabaseTableError) {
@@ -83,22 +72,25 @@ const MentoSignUpPage = () => {
       return;
     }
 
-    const { error } = await browserClient.from('auth').insert({
-      user_id: formData.user_id,
-      user_pw: formData.user_pw,
-      user_type: 'mento',
-      email: formData.email,
-      user_name: formData.user_name,
-      image_url: formData.image_url,
-      id: data.user.id,
-      mento_current: formData.mento_current,
-      mento_work_experience: formData.mento_work_experience
-    });
+    const { data: userData, error: updateError } = await browserClient
+      .from('auth')
+      .update({
+        user_id: watch('user_id'),
+        user_pw: watch('user_pw'),
+        user_type: 'mento',
+        email: watch('email'),
+        user_name: watch('user_name'),
+        image_url: watch('image_url'),
+        mento_current: watch('mento_current'),
+        mento_work_experience: watch('mento_work_experience')
+      })
+      .eq('id', data.user.id);
+    console.log(userData);
 
-    if (error) {
-      console.log('error => ', error);
+    if (updateError) {
+      console.log('회원가입에 실패했습니다 => ', updateError);
     } else {
-      console.log('success =>', data);
+      console.log('회원가입에 성공했습니다 =>', userData);
     }
   };
 

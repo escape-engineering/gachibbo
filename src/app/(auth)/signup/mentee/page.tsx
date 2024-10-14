@@ -72,7 +72,6 @@ const MenteeSignUpPage = () => {
 
   // 폼 제출 함수
   const onSubmit = async () => {
-    console.log(watch('user_id'));
     // Supabase에 사용자 등록
     const { data, error: supabaseTableError } = await browserClient.auth.signUp({
       email: watch('email'),
