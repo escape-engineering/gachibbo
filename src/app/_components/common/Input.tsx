@@ -23,12 +23,25 @@ const Input = ({
   return (
     <>
       {isLabeled ? (
-        <div className="flex flex-row justify-start min-w-[512px]">
+        <div className="flex flex-row justify-start min-w-[512px] ">
           <label htmlFor={name}>{labelText}</label>
-          <input type={type} id={name} placeholder={placeholder} value={value} onChange={onChange} />
+          <input
+            type={type}
+            id={name}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            className="border border-black py-[5px] px-[10px]"
+          />
         </div>
       ) : (
-        <input type={type} value={value} onChange={onChange} />
+        <input
+          type={type}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className="border border-black py-[5px] px-[10px]"
+        />
       )}
     </>
   );
