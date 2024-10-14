@@ -13,14 +13,14 @@ import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
   const { isLoggedIn } = useAuthStore();
-  const router = useRouter();
+  // const router = useRouter();
 
-  // 이미 로그인한 사용자인지 구분해서 접근막기
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.replace('/');
-    }
-  }, [isLoggedIn, router]);
+  // // 이미 로그인한 사용자인지 구분해서 접근막기
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     router.replace('/');
+  //   }
+  // }, [isLoggedIn, router]);
 
   // zod
   const signInSchema = z.object({
@@ -67,7 +67,6 @@ const LoginPage = () => {
 
     if (userError || !userData) {
       console.log('사용자정보가 없습니다. => ', userError);
-      setLoading(false); // 로딩 종료
       return;
     }
 

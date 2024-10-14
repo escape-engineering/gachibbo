@@ -33,27 +33,11 @@ const MentoSignUpPage = () => {
     // .regex(
     //   /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
     //   "영문+숫자+특수문자(! @ # $ % & * ?) 조합 8~15자리를 입력해주세요."
-    // ),
+    // ), // 여기까진 너무 엄격해서 테스트를 위해 주석처리했습니다
     email: z.string().email('유효한 이메일을 입력하세요.').min(1, '이메일은 필수입니다.'),
     user_name: z.string().min(1, '닉네임은 필수입니다.'),
     image_url: z.string().optional() // 이미지 URL은 선택 사항
   });
-
-  // // 인풋에 입력한 값 실시간으로 확인
-  // const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prev) => ({ ...prev, [name]: value }));
-  // };
-
-  // // 경력 실시간 확인
-  // const handleSelectChange = async (value: string) => {
-  //   setFormData((prev) => ({ ...prev, mento_work_experience: value }));
-  // };
-
-  // // 현직여부 실시간 확인
-  // const handleRadioChange = async (value: boolean) => {
-  //   setFormData((prev) => ({ ...prev, mento_current: value }));
-  // };
 
   // 리액트 훅 폼으로 유효성 검사
   const { register, handleSubmit, formState, setValue } = useForm({

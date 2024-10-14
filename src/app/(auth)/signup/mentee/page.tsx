@@ -30,17 +30,11 @@ const MenteeSignUpPage = () => {
     // .regex(
     //   /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
     //   "영문+숫자+특수문자(! @ # $ % & * ?) 조합 8~15자리를 입력해주세요."
-    // ),
+    // ), // 여기까진 너무 엄격해서 테스트를 위해 주석처리했습니다
     email: z.string().email('유효한 이메일을 입력하세요.').min(1, '이메일은 필수입니다.'),
     user_name: z.string().min(1, '닉네임은 필수입니다.'),
     image_url: z.string().optional() // 이미지 URL은 선택 사항
   });
-
-  // // 인풋에 입력한 값 실시간으로 확인
-  // const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prev) => ({ ...prev, [name]: value }));
-  // };
 
   // 프로필 이미지 등록 핸들러
   const handleImgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +47,7 @@ const MenteeSignUpPage = () => {
 
     const { data: imgData, error: imgError } = await browserClient.storage
       .from('profile_img')
-      .upload(`${user_id}/${image_url}`, file, {
+      .upload(`${user_id}/${file.name}`, file, {
         cacheControl: '3600',
         upsert: false
       });
@@ -63,7 +57,7 @@ const MenteeSignUpPage = () => {
   };
 
   // 리액트 훅 폼으로 유효성 검사
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, watch } = useForm({
     mode: 'onChange',
     defaultValues: {
       user_id: '',
@@ -76,23 +70,15 @@ const MenteeSignUpPage = () => {
     resolver: zodResolver(signUpSchema)
   });
 
-  type FormData = {
-    user_id: string;
-    user_pw: string;
-    user_type: string;
-    email: string;
-    user_name: string;
-    image_url: string;
-  };
-
   // 폼 제출 함수
-  const onSubmit: SubmitHandler<FormData> = async (formData) => {
+  const onSubmit = async () => {
+    console.log(watch('user_id'));
     // Supabase에 사용자 등록
     const { data, error: supabaseTableError } = await browserClient.auth.signUp({
-      email: formData.email,
-      password: formData.user_pw
+      email: watch('email'),
+      password: watch('user_pw')
     });
-
+    console.log(data);
     if (supabaseTableError) {
       console.log('supabaseTableError =>', supabaseTableError);
       return;
@@ -103,20 +89,23 @@ const MenteeSignUpPage = () => {
       return;
     }
 
-    const { error } = await browserClient.from('auth').insert({
-      user_id: formData.user_id,
-      user_pw: formData.user_pw,
-      user_type: 'mentee',
-      email: formData.email,
-      user_name: formData.user_name,
-      image_url: formData.image_url,
-      id: data.user.id
-    });
+    const { data: userData, error: updateError } = await browserClient
+      .from('auth')
+      .update({
+        user_id: watch('user_id'),
+        user_pw: watch('user_pw'),
+        user_type: 'mentee',
+        email: watch('email'),
+        user_name: watch('user_name'),
+        image_url: watch('image_url')
+      })
+      .eq('id', data.user.id);
+    console.log(userData);
 
-    if (error) {
-      console.log('error => ', error);
+    if (updateError) {
+      console.log('회원가입에 실패했습니다 => ', updateError);
     } else {
-      console.log('success =>', data);
+      console.log('회원가입에 성공했습니다 =>', userData);
     }
   };
 
