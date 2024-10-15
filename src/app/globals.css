@@ -10,6 +10,15 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .writingMode-vertical-lr {
+    writing-mode: vertical-lr;
+  }
+  .writingMode-vertical-rl {
+    writing-mode: vertical-rl;
+  }
+  .writingMode-horizontal-tb {
+    writing-mode: horizontal-tb;
+  }
 }
 
 /* reset.css */
