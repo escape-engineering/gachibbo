@@ -3,7 +3,7 @@
 import { createClient } from '../../utils/supabase/client';
 import { useEffect, useState } from 'react';
 import productList from '../../../db.json';
-import { product } from '@/type/types';
+import { product } from '@/type/PointTypes';
 
 const PointStorePage = () => {
   const supabase = createClient();
