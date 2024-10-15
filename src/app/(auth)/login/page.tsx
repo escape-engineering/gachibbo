@@ -79,6 +79,17 @@ const LoginPage = () => {
 
     if (error) console.error(error);
     if (authData) {
+      // 로그인한 날짜랑 현재날짜를 비교해서
+      // 날짜가 같으면 적립하지 않고, (같은 날 로그인 한 적이 있는 것이므로)
+      // 날짜가 다르면 50포인트를 적립한다.(그날 처음 로그인 한 것이므로)
+
+      //현재날짜
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
+      const today = year + '-' + month + '-' + day;
+
       useAuthStore.setState({
         isLoggedIn: true,
         userId: userData.user_id,

@@ -17,9 +17,8 @@ const Mypage = () => {
   //   }
   // }, [isLoggedIn, router]);
 
-  const { userId, userName, userType, userImg, mentoCurrent, mentoWorkExperience } = useAuthStore();
-  console.log(userId, userName, userType, userImg, mentoCurrent, mentoWorkExperience);
-  console.log(useAuthStore);
+  const { userName, userType, userImg, mentoCurrent, mentoWorkExperience } = useAuthStore();
+
   return (
     <>
       <section className="p-4">
@@ -27,7 +26,15 @@ const Mypage = () => {
 
         <div>
           {/* 좌측 - 유저 정보(멘토멘티 여부, 이름, ) */}
-          <div>{/* <Image src={userImg} /> */}</div>
+          <div>
+            <img
+              src={`${userImg}`}
+              alt={`${userName}의 프로필 이미지`}
+              width={150}
+              height={150}
+              className="rounded-full"
+            />{' '}
+          </div>
           <div>
             {userType === 'mento' ? (
               <div>
@@ -36,8 +43,8 @@ const Mypage = () => {
               </div>
             ) : null}
             <div>
-              <h5>{userType || null}</h5>
-              <h3>{userId || '정보 없음'}</h3>
+              <h5>{userType === 'mento' ? '멘토' : userType === 'mentee' ? '멘티' : '유형 없음'}</h5>
+              <h3>{userName || '정보 없음'}</h3>
             </div>
           </div>
           {/* 우측 - 포인트 */}

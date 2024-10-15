@@ -112,6 +112,17 @@ const MenteeSignUpPage = () => {
       console.log('회원가입에 실패했습니다 => ', updateError);
     } else {
       console.log('회원가입에 성공했습니다 =>', userData);
+
+      const { data: pointData, error: pointError } = await browserClient.from('point').insert({
+        user_id: data.user.id,
+        user_point: 200
+      });
+
+      if (pointError) {
+        console.log('포인트 테이블 생성 실패 =>', pointError);
+      } else {
+        console.log('포인트 테이블 생성 성공 =>', pointData);
+      }
     }
   };
 

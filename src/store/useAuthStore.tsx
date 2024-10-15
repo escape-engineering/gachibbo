@@ -8,6 +8,8 @@ type AuthState = {
   error: string | null; // 에러
   login: () => void;
   logout: () => void;
+  lastLogin: string | null;
+  setLastLogin: (date: string) => void;
 
   userId: string | null;
   setUserId: (userId: string) => void;
@@ -34,6 +36,9 @@ export const useAuthStore = create(
       error: null,
       login: () => set({ isLoggedIn: true }),
       logout: () => set({ isLoggedIn: false, userId: null, userName: null, userType: null }),
+      lastLogin: null,
+      setLastLogin: (date: string) => set({ lastLogin: date }),
+
       userId: null,
       setUserId: (userId: string) => set({ userId: userId }),
       userName: null,

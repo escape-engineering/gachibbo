@@ -13,6 +13,8 @@ import useAuthStore from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 
 const MentoSignUpPage = () => {
+  const router = useRouter();
+
   // const { isLoggedIn } = useAuthStore();
   // const router = useRouter();
 
@@ -91,7 +93,20 @@ const MentoSignUpPage = () => {
       console.log('회원가입에 실패했습니다 => ', updateError);
     } else {
       console.log('회원가입에 성공했습니다 =>', userData);
+
+      const { data: pointData, error: pointError } = await browserClient.from('point').insert({
+        user_id: data.user.id,
+        user_point: 200
+      });
+
+      if (pointError) {
+        console.log('포인트 테이블 생성 실패 =>', pointError);
+      } else {
+        console.log('포인트 테이블 생성 성공 =>', pointData);
+      }
     }
+
+    router.push('/');
   };
 
   return (
@@ -126,9 +141,9 @@ const MentoSignUpPage = () => {
               <SelectValue placeholder="경력을 선택해 주세요." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1~2">1~2 년차 주니어</SelectItem>
-              <SelectItem value="3~5">3~5 년차 시니어</SelectItem>
-              <SelectItem value="6~">6년 이상 리더</SelectItem>
+              <SelectItem value="1~2 년차 주니어">1~2 년차 주니어</SelectItem>
+              <SelectItem value="3~5 년차 시니어">3~5 년차 시니어</SelectItem>
+              <SelectItem value="6년 이상 리더">6년 이상 리더</SelectItem>
             </SelectContent>
           </Select>
         </div>
