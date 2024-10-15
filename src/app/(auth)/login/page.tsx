@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FormEvent, useState } from 'react';
+import React, { useEffect } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -9,8 +9,20 @@ import Button from '@/app/_components/common/Button';
 import { createClient } from '@/utils/supabase/client';
 import Input from '@/app/_components/common/Input';
 import useAuthStore from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
+  const router = useRouter();
+  // const { isLoggedIn } = useAuthStore();
+  // const router = useRouter();
+
+  // // 이미 로그인한 사용자인지 구분해서 접근막기
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     router.replace('/');
+  //   }
+  // }, [isLoggedIn, router]);
+
   // zod
   const signInSchema = z.object({
     user_id: z.string().min(1, '아이디는 필수입니다.'),
@@ -18,11 +30,17 @@ const LoginPage = () => {
   });
 
   // 리액트 훅 폼으로 유효성 검사
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, watch } = useForm({
     mode: 'onChange',
     defaultValues: {
       user_id: '',
-      user_pw: ''
+      user_pw: '',
+      email: '',
+      user_type: '',
+      user_name: '',
+      image_url: '',
+      mento_current: false,
+      mento_work_experience: ''
     },
     resolver: zodResolver(signInSchema)
   });
@@ -44,26 +62,47 @@ const LoginPage = () => {
     // auth 테이블에서 id와 일치하는 행의 이메일을 가져옴
     const { data: userData, error: userError } = await supabase
       .from('auth')
-      .select('email')
+      .select('email, user_id, user_name, user_type, image_url, mento_current, mento_work_experience')
       .eq('user_id', formData.user_id)
       .single();
 
     if (userError || !userData) {
       console.log('사용자정보가 없습니다. => ', userError);
+      return;
     }
 
     // 위에서 가져온 이메일로 로그인
     const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email: userData?.email,
+      email: userData.email,
       password: formData.user_pw
     });
 
     if (error) console.error(error);
     if (authData) {
+      // 로그인한 날짜랑 현재날짜를 비교해서
+      // 날짜가 같으면 적립하지 않고, (같은 날 로그인 한 적이 있는 것이므로)
+      // 날짜가 다르면 50포인트를 적립한다.(그날 처음 로그인 한 것이므로)
+
+      //현재날짜
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
+      const today = year + '-' + month + '-' + day;
+
       useAuthStore.setState({
         isLoggedIn: true,
-        userId: formData.user_id
+        userId: userData.user_id,
+        userName: userData.user_name,
+        userEmail: userData.email,
+        userImg: userData.image_url,
+        userType: userData.user_type,
+        mentoCurrent: userData.mento_current,
+        mentoWorkExperience: userData.mento_work_experience
       });
+
+      console.log(authData);
+      router.push('/');
     }
   };
 

@@ -1,26 +1,29 @@
 'use client';
 
 import Button from '@/app/_components/common/Button';
-import { createClient } from '@/utils/supabase/client';
+import browserClient, { createClient } from '@/utils/supabase/client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import useAuthStore from '@/store/useAuthStore';
+import { useRouter } from 'next/navigation';
 
 const MentoSignUpPage = () => {
-  const [formData, setFormData] = useState({
-    user_id: '',
-    user_pw: '',
-    user_type: 'mentee',
-    email: '',
-    user_name: '',
-    image_url: '',
-    mento_current: false,
-    mento_work_experience: ''
-  });
+  const router = useRouter();
+
+  // const { isLoggedIn } = useAuthStore();
+  // const router = useRouter();
+
+  // // 이미 로그인한 사용자인지 구분해서 접근막기
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     router.replace('/');
+  //   }
+  // }, [isLoggedIn, router]);
 
   //zod
   const signUpSchema = z.object({
@@ -32,30 +35,14 @@ const MentoSignUpPage = () => {
     // .regex(
     //   /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/,
     //   "영문+숫자+특수문자(! @ # $ % & * ?) 조합 8~15자리를 입력해주세요."
-    // ),
+    // ), // 여기까진 너무 엄격해서 테스트를 위해 주석처리했습니다
     email: z.string().email('유효한 이메일을 입력하세요.').min(1, '이메일은 필수입니다.'),
     user_name: z.string().min(1, '닉네임은 필수입니다.'),
     image_url: z.string().optional() // 이미지 URL은 선택 사항
   });
 
-  // // 인풋에 입력한 값 실시간으로 확인
-  // const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prev) => ({ ...prev, [name]: value }));
-  // };
-
-  // // 경력 실시간 확인
-  // const handleSelectChange = async (value: string) => {
-  //   setFormData((prev) => ({ ...prev, mento_work_experience: value }));
-  // };
-
-  // // 현직여부 실시간 확인
-  // const handleRadioChange = async (value: boolean) => {
-  //   setFormData((prev) => ({ ...prev, mento_current: value }));
-  // };
-
   // 리액트 훅 폼으로 유효성 검사
-  const { register, handleSubmit, formState, setValue } = useForm({
+  const { register, handleSubmit, formState, setValue, watch } = useForm({
     mode: 'onChange',
     defaultValues: {
       user_id: '',
@@ -63,32 +50,19 @@ const MentoSignUpPage = () => {
       user_type: 'mentee',
       email: '',
       user_name: '',
-      image_url: '',
+      image_url: 'https://tjpmmmdahokzcxwqfsjn.supabase.co/storage/v1/object/public/user_image/avatar.png',
       mento_current: false,
       mento_work_experience: ''
     },
     resolver: zodResolver(signUpSchema)
   });
 
-  type FormData = {
-    user_id: string;
-    user_pw: string;
-    user_type: string;
-    email: string;
-    user_name: string;
-    image_url: string;
-    mento_current: boolean;
-    mento_work_experience: string;
-  };
-
   // 폼 제출 함수
-  const onSubmit: SubmitHandler<FormData> = async (formData) => {
-    const supabase = createClient();
-
+  const onSubmit = async () => {
     // Supabase에 사용자 등록
-    const { data, error: supabaseTableError } = await supabase.auth.signUp({
-      email: formData.email,
-      password: formData.user_pw
+    const { data, error: supabaseTableError } = await browserClient.auth.signUp({
+      email: watch('email'),
+      password: watch('user_pw')
     });
 
     if (supabaseTableError) {
@@ -100,23 +74,39 @@ const MentoSignUpPage = () => {
       return;
     }
 
-    const { error } = await supabase.from('auth').insert({
-      user_id: formData.user_id,
-      user_pw: formData.user_pw,
-      user_type: 'mento',
-      email: formData.email,
-      user_name: formData.user_name,
-      image_url: formData.image_url,
-      id: data.user.id,
-      mento_current: formData.mento_current,
-      mento_work_experience: formData.mento_work_experience
-    });
+    const { data: userData, error: updateError } = await browserClient
+      .from('auth')
+      .update({
+        user_id: watch('user_id'),
+        user_pw: watch('user_pw'),
+        user_type: 'mento',
+        email: watch('email'),
+        user_name: watch('user_name'),
+        image_url: watch('image_url'),
+        mento_current: watch('mento_current'),
+        mento_work_experience: watch('mento_work_experience')
+      })
+      .eq('id', data.user.id);
+    console.log(userData);
 
-    if (error) {
-      console.log('error => ', error);
+    if (updateError) {
+      console.log('회원가입에 실패했습니다 => ', updateError);
     } else {
-      console.log('success =>', data);
+      console.log('회원가입에 성공했습니다 =>', userData);
+
+      const { data: pointData, error: pointError } = await browserClient.from('point').insert({
+        user_id: data.user.id,
+        user_point: 200
+      });
+
+      if (pointError) {
+        console.log('포인트 테이블 생성 실패 =>', pointError);
+      } else {
+        console.log('포인트 테이블 생성 성공 =>', pointData);
+      }
     }
+
+    router.push('/');
   };
 
   return (
@@ -151,9 +141,9 @@ const MentoSignUpPage = () => {
               <SelectValue placeholder="경력을 선택해 주세요." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1~2">1~2 년</SelectItem>
-              <SelectItem value="3~5">3~5 년</SelectItem>
-              <SelectItem value="6~">6년 이상</SelectItem>
+              <SelectItem value="1~2 년차 주니어">1~2 년차 주니어</SelectItem>
+              <SelectItem value="3~5 년차 시니어">3~5 년차 시니어</SelectItem>
+              <SelectItem value="6년 이상 리더">6년 이상 리더</SelectItem>
             </SelectContent>
           </Select>
         </div>
