@@ -4,7 +4,6 @@ import React from 'react';
 
 const LogoutButton = () => {
   const { logout } = useAuthStore();
-  // const cookies = useCookies();
   const deleteAllCookies = () => {
     const cookies = document.cookie.split(';');
     cookies.forEach((cookie) => {

@@ -52,7 +52,14 @@ const LoginPage = () => {
   };
 
   type userData = {
+    id: string;
     email: string;
+    user_id: string;
+    user_name: string;
+    user_type: string;
+    image_url: string;
+    mento_current: boolean;
+    mento_work_experience: string;
   };
 
   // 폼 제출 함수
@@ -62,7 +69,7 @@ const LoginPage = () => {
     // auth 테이블에서 id와 일치하는 행의 이메일을 가져옴
     const { data: userData, error: userError } = await supabase
       .from('auth')
-      .select('email, user_id, user_name, user_type, image_url, mento_current, mento_work_experience')
+      .select('id, email, user_id, user_name, user_type, image_url, mento_current, mento_work_experience')
       .eq('user_id', formData.user_id)
       .single();
 
@@ -100,6 +107,7 @@ const LoginPage = () => {
 
       useAuthStore.setState({
         isLoggedIn: true,
+        userUid: userData.id,
         userId: userData.user_id,
         userName: userData.user_name,
         userEmail: userData.email,

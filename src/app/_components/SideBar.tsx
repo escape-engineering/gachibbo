@@ -7,12 +7,8 @@ import React from 'react';
 import LogoutButton from './LogoutButton';
 
 const SideBar = () => {
-  const { isLoggedIn, logout, loading, userId } = useAuthStore();
-
-  const handleLogout = () => {
-    logout(); // 로그아웃
-    //cookies().delete('currentUser');
-  };
+  const { isLoggedIn, loading } = useAuthStore();
+  const { userImg, userName } = useAuthStore();
 
   return (
     <aside className="flex flex-col justify-between h-[100vh] bg-[#064F32] py-[100px] px-[20px]">
@@ -32,7 +28,11 @@ const SideBar = () => {
         {isLoggedIn ? <LogoutButton /> : <Link href={'/login'}>로그인</Link>}
       </div>
       <div>
-        <img className="border border-black border-solid w-[40px] h-[40px]" src="" alt="" />
+        <img
+          className="border border-black border-solid w-[40px] h-[40px]"
+          src={`${userImg}`}
+          alt={`${userName}의 프로필 이미지`}
+        />
       </div>
     </aside>
   );

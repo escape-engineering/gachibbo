@@ -57,6 +57,33 @@ const MentoSignUpPage = () => {
     resolver: zodResolver(signUpSchema)
   });
 
+  // 프로필 이미지 등록 핸들러
+  const handleImgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      console.log('파일을 선택해 주세요.');
+      return;
+    }
+
+    const userId = watch('user_id');
+
+    const { data: imgData, error: imgError } = await browserClient.storage
+      .from('user_image')
+      .upload(`${userId}/${file.name}`, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+    if (imgError) {
+      console.log('이미지 오류 => ', imgError);
+    }
+
+    // 업로드된 이미지의 URL 가져오기
+    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_image/${userId}/${file.name}`;
+
+    setValue('image_url', imageUrl);
+  };
+
   // 폼 제출 함수
   const onSubmit = async () => {
     // Supabase에 사용자 등록
@@ -159,6 +186,10 @@ const MentoSignUpPage = () => {
               <Label htmlFor="no">아니오</Label>
             </div>
           </RadioGroup>
+        </div>
+        <div>
+          <label htmlFor="image_url">프로필 이미지 업로드</label>
+          <input type="file" accept="image/*" onChange={handleImgUpload} />
         </div>
         <Button
           onClick={() => {
