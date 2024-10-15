@@ -5,6 +5,7 @@ import Providers from '@/store/queryProvider';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import useAuthStore from '@/store/useAuthStore';
 import SideBar from './_components/SideBar';
+import { CookiesProvider } from 'next-client-cookies/server';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -33,10 +34,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          <div className="flex flex-row">
-            <SideBar />
-            {children}
-          </div>
+          <CookiesProvider>
+            <div className="flex flex-row">
+              <SideBar />
+              {children}
+            </div>
+          </CookiesProvider>
           <ReactQueryDevtools />
         </Providers>
       </body>

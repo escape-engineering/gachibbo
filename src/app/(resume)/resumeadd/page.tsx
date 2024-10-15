@@ -10,6 +10,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import jsPDF from 'jspdf';
 import '@/utils/resume/malgun-normal.js';
 import { convertImgToBase64 } from '@/utils/resume/convertImgToBase64';
+import SideBarByPage from '@/app/_components/common/SideBarByPage';
 interface Props {
   searchParams: {
     query_post_id?: string;
@@ -529,220 +530,226 @@ const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
     doc.save(`${title ? title : '이력서'}`);
   };
   return (
-    <div>
-      <div className="flex flex-row gap-[10px]">
-        <button onClick={() => console.log(postId)}>1</button>
-        <Button onClick={() => openNewTabForPdf()}>미리보기</Button>
-        <Button onClick={() => (query_post_id ? updatePdfToStorage() : uploadPdfToStorage())}>이력서게시글 등록</Button>
-        <Button onClick={() => savePdfToLocal()}>이력서 PDF로 저장</Button>
-        <Button onClick={() => testLogin()}>임시로그인</Button>
-        <Button onClick={() => testLogout()}>임시로그아웃</Button>
-        {/* <Button onClick={() => getSessionData()}>getSession테스트</Button> */}
-        <Button onClick={() => isUsablePoint(point)}>포인트 테스트</Button>
-      </div>
-      <section id="resumeTitleSection">
-        <Input placeholder="OOO님의 이력서" value={title} onChange={handleTitle} ref={titleRef} />
-        <Input isLabeled={true} labelText="*채택 포인트 : " value={point} onChange={handlePoint} ref={pointRef} />
-      </section>
-      <div className="flex flex-col justify-start items-center py-[5px]">
-        <section className="flex flex-row gap-[30px]">
-          <div>
-            <label htmlFor="profileImg">프로필 이미지 첨부</label>
-            <input
-              id="profileImg"
-              type="file"
-              className="hidden"
-              onChange={(e) => handleProfileImg(e)}
-              accept="image/png" //NOTE - pdf설정때문에 png만 가능하게 했음, 추가방식 고민해보겠음
-            />
-          </div>
-          <div>
-            <Input isLabeled={true} labelText="*이름 : " name="name" value={name} onChange={handleName} ref={nameRef} />
-            <Input
-              isLabeled={true}
-              labelText="*성별 : "
-              name="gender"
-              value={gender}
-              onChange={handleGender}
-              ref={genderRef}
-              placeholder="남성/여성"
-            />
-            <Input
-              isLabeled={true}
-              labelText="*전화번호 : "
-              name="phoneNum"
-              value={phoneNum}
-              onChange={handlePhoneNum}
-              ref={phoneNumRef}
-              placeholder="010-0000-0000"
-            />
-            <Input
-              isLabeled={true}
-              labelText="*이메일 : "
-              name="email"
-              value={email}
-              onChange={handleEmail}
-              ref={emailRef}
-              placeholder="example@ex.com"
-            />
-            <Input
-              isLabeled={true}
-              labelText="*주소 : "
-              name="address"
-              value={address}
-              onChange={handleAddress}
-              ref={addressRef}
-            />
-            <Input
-              isLabeled={true}
-              labelText="*근무희망지 : "
-              name="region"
-              value={region}
-              onChange={handleRegion}
-              ref={regionRef}
-            />
-            <Input
-              isLabeled={true}
-              labelText="*경력 : "
-              name="experience"
-              type="number"
-              value={expYears}
-              onChange={handleExpYears}
-              ref={expYearsRef}
-            />
-          </div>
+    <div className="flex flex-row">
+      <SideBarByPage>
+        <div className="flex flex-col gap-[10px]">
+          <Button onClick={() => openNewTabForPdf()}>미리보기</Button>
+          <Button onClick={() => (query_post_id ? updatePdfToStorage() : uploadPdfToStorage())}>이력서 등록</Button>
+          <Button onClick={() => savePdfToLocal()}>이력서 저장</Button>
+        </div>
+      </SideBarByPage>
+      <div>
+        <section id="resumeTitleSection">
+          <Input placeholder="OOO님의 이력서" value={title} onChange={handleTitle} ref={titleRef} />
+          <Input isLabeled={true} labelText="*채택 포인트 : " value={point} onChange={handlePoint} ref={pointRef} />
         </section>
-        <section>
-          <div className="flex flex-row gap-[5px] my-[5px]">
-            <p className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
-              학력
-            </p>
-            <Button onClick={() => addForm('education')}>+</Button>
-          </div>
-          {eduArray.map((edu, idx) => {
-            return (
-              <div key={edu.edu_id} className="flex flex-col gap-[10px]">
-                <button onClick={() => deleteForm('education', edu.edu_id)}>삭제</button>
-                <div className="flex flex-col gap-[10px]">
-                  <Input
-                    isLabeled={true}
-                    labelText="졸업년월 : "
-                    value={edu.graduated_at}
-                    onChange={(e) => handleArray(idx, 'graduated_at', setEduArray, e)}
-                    placeholder="2024.10.14"
-                  />
-                  <Input
-                    isLabeled={true}
-                    labelText="학교명 : "
-                    value={edu.school_name}
-                    onChange={(e) => handleArray(idx, 'school_name', setEduArray, e)}
-                  />
-                  <Input
-                    isLabeled={true}
-                    labelText="전공 : "
-                    value={edu.major}
-                    onChange={(e) => handleArray(idx, 'major', setEduArray, e)}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </section>
-        <section>
-          <div className="flex flex-row gap-[5px] my-[5px]">
-            <div className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
-              경력사항
+        <div className="flex flex-col justify-start items-center py-[5px]">
+          <section className="flex flex-row gap-[30px]">
+            <div>
+              <label htmlFor="profileImg">프로필 이미지 첨부</label>
+              <input
+                id="profileImg"
+                type="file"
+                className="hidden"
+                onChange={(e) => handleProfileImg(e)}
+                accept="image/png" //NOTE - pdf설정때문에 png만 가능하게 했음, 추가방식 고민해보겠음
+              />
             </div>
-            <Button onClick={() => addForm('experience')}>+</Button>
-          </div>
-          {expArray.map((exp, idx) => {
-            return (
-              <div key={exp.exp_id} className="flex flex-col gap-[10px]">
-                <button onClick={() => deleteForm('experience', exp.exp_id)}>삭제</button>
-                <div className="flex flex-col gap-[10px]">
-                  <Input
-                    isLabeled={true}
-                    labelText="기간 : "
-                    value={exp.exp_period}
-                    onChange={(e) => handleArray(idx, 'exp_period', setExpArray, e)}
-                    placeholder="2020.10.14~2024.10.14"
-                  />
-                  <Input
-                    isLabeled={true}
-                    labelText="근무처 : "
-                    value={exp.exp_region}
-                    onChange={(e) => handleArray(idx, 'exp_region', setExpArray, e)}
-                  />
-                  <Input
-                    isLabeled={true}
-                    labelText="직위 : "
-                    value={exp.exp_position}
-                    onChange={(e) => handleArray(idx, 'exp_position', setExpArray, e)}
-                    placeholder="ex) PM"
-                  />
-                  <Input
-                    isLabeled={true}
-                    labelText="업무내용 : "
-                    value={exp.exp_desc}
-                    onChange={(e) => handleArray(idx, 'exp_desc', setExpArray, e)}
-                    placeholder="내일배움캠프 클라이언트 DB관리"
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </section>
-        <section>
-          <div className="flex flex-row gap-[5px] my-[5px]">
-            <div className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
-              보유기술 / 자격증
+            <div>
+              <Input
+                isLabeled={true}
+                labelText="*이름 : "
+                name="name"
+                value={name}
+                onChange={handleName}
+                ref={nameRef}
+              />
+              <Input
+                isLabeled={true}
+                labelText="*성별 : "
+                name="gender"
+                value={gender}
+                onChange={handleGender}
+                ref={genderRef}
+                placeholder="남성/여성"
+              />
+              <Input
+                isLabeled={true}
+                labelText="*전화번호 : "
+                name="phoneNum"
+                value={phoneNum}
+                onChange={handlePhoneNum}
+                ref={phoneNumRef}
+                placeholder="010-0000-0000"
+              />
+              <Input
+                isLabeled={true}
+                labelText="*이메일 : "
+                name="email"
+                value={email}
+                onChange={handleEmail}
+                ref={emailRef}
+                placeholder="example@ex.com"
+              />
+              <Input
+                isLabeled={true}
+                labelText="*주소 : "
+                name="address"
+                value={address}
+                onChange={handleAddress}
+                ref={addressRef}
+              />
+              <Input
+                isLabeled={true}
+                labelText="*근무희망지 : "
+                name="region"
+                value={region}
+                onChange={handleRegion}
+                ref={regionRef}
+              />
+              <Input
+                isLabeled={true}
+                labelText="*경력 : "
+                name="experience"
+                type="number"
+                value={expYears}
+                onChange={handleExpYears}
+                ref={expYearsRef}
+              />
             </div>
-            <Button onClick={() => addForm('license')}>+</Button>
-          </div>
-          {licArray.map((lic, idx) => {
-            return (
-              <div key={lic.lic_id} className="flex flex-col gap-[10px]">
-                <button onClick={() => deleteForm('license', lic.lic_id)}>삭제</button>
-                <div className="flex flex-col gap-[10px]">
-                  <Input
-                    isLabeled={true}
-                    labelText="취득 년월일 : "
-                    value={lic.lic_date}
-                    onChange={(e) => handleArray(idx, 'lic_date', setLicArray, e)}
-                    placeholder="2024.10.14"
-                  />
-                  <Input
-                    isLabeled={true}
-                    labelText="자격/면허증 : "
-                    value={lic.lic_title}
-                    onChange={(e) => handleArray(idx, 'lic_title', setLicArray, e)}
-                    placeholder="정보처리기사"
-                  />
-                  <Input
-                    isLabeled={true}
-                    labelText="시행처 : "
-                    value={lic.lic_agency}
-                    onChange={(e) => handleArray(idx, 'lic_agency', setLicArray, e)}
-                    placeholder="한국산업인력공단"
-                  />
+          </section>
+          <section>
+            <div className="flex flex-row gap-[5px] my-[5px]">
+              <p className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
+                학력
+              </p>
+              <Button onClick={() => addForm('education')}>+</Button>
+            </div>
+            {eduArray.map((edu, idx) => {
+              return (
+                <div key={edu.edu_id} className="flex flex-col gap-[10px]">
+                  <button onClick={() => deleteForm('education', edu.edu_id)}>삭제</button>
+                  <div className="flex flex-col gap-[10px]">
+                    <Input
+                      isLabeled={true}
+                      labelText="졸업년월 : "
+                      value={edu.graduated_at}
+                      onChange={(e) => handleArray(idx, 'graduated_at', setEduArray, e)}
+                      placeholder="2024.10.14"
+                    />
+                    <Input
+                      isLabeled={true}
+                      labelText="학교명 : "
+                      value={edu.school_name}
+                      onChange={(e) => handleArray(idx, 'school_name', setEduArray, e)}
+                    />
+                    <Input
+                      isLabeled={true}
+                      labelText="전공 : "
+                      value={edu.major}
+                      onChange={(e) => handleArray(idx, 'major', setEduArray, e)}
+                    />
+                  </div>
                 </div>
+              );
+            })}
+          </section>
+          <section>
+            <div className="flex flex-row gap-[5px] my-[5px]">
+              <div className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
+                경력사항
               </div>
-            );
-          })}
-        </section>
-        <section>
-          <div>
-            <label htmlFor="resumeDescription">*내용 입력</label>
-            <textarea
-              id="resumeDescription"
-              className="w-[800px] min-h-[600px] "
-              placeholder="이력서 피드백 혹은 추가자료 관련 작성하고 싶은 내용을 적어주세요."
-              value={resumeDesc}
-              onChange={handleResumeDesc}
-              ref={resumeDescRef}
-            />
-          </div>
-        </section>
+              <Button onClick={() => addForm('experience')}>+</Button>
+            </div>
+            {expArray.map((exp, idx) => {
+              return (
+                <div key={exp.exp_id} className="flex flex-col gap-[10px]">
+                  <button onClick={() => deleteForm('experience', exp.exp_id)}>삭제</button>
+                  <div className="flex flex-col gap-[10px]">
+                    <Input
+                      isLabeled={true}
+                      labelText="기간 : "
+                      value={exp.exp_period}
+                      onChange={(e) => handleArray(idx, 'exp_period', setExpArray, e)}
+                      placeholder="2020.10.14~2024.10.14"
+                    />
+                    <Input
+                      isLabeled={true}
+                      labelText="근무처 : "
+                      value={exp.exp_region}
+                      onChange={(e) => handleArray(idx, 'exp_region', setExpArray, e)}
+                    />
+                    <Input
+                      isLabeled={true}
+                      labelText="직위 : "
+                      value={exp.exp_position}
+                      onChange={(e) => handleArray(idx, 'exp_position', setExpArray, e)}
+                      placeholder="ex) PM"
+                    />
+                    <Input
+                      isLabeled={true}
+                      labelText="업무내용 : "
+                      value={exp.exp_desc}
+                      onChange={(e) => handleArray(idx, 'exp_desc', setExpArray, e)}
+                      placeholder="내일배움캠프 클라이언트 DB관리"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+          <section>
+            <div className="flex flex-row gap-[5px] my-[5px]">
+              <div className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
+                보유기술 / 자격증
+              </div>
+              <Button onClick={() => addForm('license')}>+</Button>
+            </div>
+            {licArray.map((lic, idx) => {
+              return (
+                <div key={lic.lic_id} className="flex flex-col gap-[10px]">
+                  <button onClick={() => deleteForm('license', lic.lic_id)}>삭제</button>
+                  <div className="flex flex-col gap-[10px]">
+                    <Input
+                      isLabeled={true}
+                      labelText="취득 년월일 : "
+                      value={lic.lic_date}
+                      onChange={(e) => handleArray(idx, 'lic_date', setLicArray, e)}
+                      placeholder="2024.10.14"
+                    />
+                    <Input
+                      isLabeled={true}
+                      labelText="자격/면허증 : "
+                      value={lic.lic_title}
+                      onChange={(e) => handleArray(idx, 'lic_title', setLicArray, e)}
+                      placeholder="정보처리기사"
+                    />
+                    <Input
+                      isLabeled={true}
+                      labelText="시행처 : "
+                      value={lic.lic_agency}
+                      onChange={(e) => handleArray(idx, 'lic_agency', setLicArray, e)}
+                      placeholder="한국산업인력공단"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </section>
+          <section>
+            <div>
+              <label htmlFor="resumeDescription">*내용 입력</label>
+              <textarea
+                id="resumeDescription"
+                className="w-[800px] min-h-[600px] "
+                placeholder="이력서 피드백 혹은 추가자료 관련 작성하고 싶은 내용을 적어주세요."
+                value={resumeDesc}
+                onChange={handleResumeDesc}
+                ref={resumeDescRef}
+              />
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
