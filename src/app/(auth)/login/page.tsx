@@ -79,16 +79,24 @@ const LoginPage = () => {
 
     if (error) console.error(error);
     if (authData) {
-      // 로그인한 날짜랑 현재날짜를 비교해서
-      // 날짜가 같으면 적립하지 않고, (같은 날 로그인 한 적이 있는 것이므로)
-      // 날짜가 다르면 50포인트를 적립한다.(그날 처음 로그인 한 것이므로)
+      // // 로그인한 날짜랑 현재날짜를 비교해서
+      // // 날짜가 같으면 적립하지 않고, (같은 날 로그인 한 적이 있는 것이므로)
+      // // 날짜가 다르면 50포인트를 적립한다.(그날 처음 로그인 한 것이므로)
 
-      //현재날짜
-      const date = new Date();
-      const year = date.getFullYear();
-      const month = ('0' + (date.getMonth() + 1)).slice(-2);
-      const day = ('0' + date.getDate()).slice(-2);
-      const today = year + '-' + month + '-' + day;
+      // //현재날짜
+      // const date = new Date(); // 날짜를 가져와서
+      // const year = date.getFullYear(); // 년을 뽑고
+      // const month = ('0' + (date.getMonth() + 1)).slice(-2); // 달을 뽑고
+      // const day = ('0' + date.getDate()).slice(-2); // 일을 뽑고
+      // const today = year + '-' + month + '-' + day; // 년,달,일을 yy-mm-dd 형식으로 붙임
+
+      // //로그인한 날짜
+      // const { user } = await supabase.auth.getUser();
+
+      // const lastSignDate = user.last_sign_in_at;
+      // const lastSignInDate = new Date(lastSignDate).toISOString().split('T')[0];
+
+      // if (lastSignInDate !== today)
 
       useAuthStore.setState({
         isLoggedIn: true,
