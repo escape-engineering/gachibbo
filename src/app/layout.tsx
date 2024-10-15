@@ -35,8 +35,10 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <CookiesProvider>
-            <SideBar />
-            {children}
+            <div className="flex flex-row">
+              <SideBar />
+              {children}
+            </div>
           </CookiesProvider>
           <ReactQueryDevtools />
         </Providers>
