@@ -1,0 +1,102 @@
+'use client';
+
+import { createClient } from '@/utils/supabase/client';
+import React, { useEffect, useState } from 'react';
+import { ResumeType } from '@/types/ResumeType';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'core-js/full/promise/with-resolvers.js';
+import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+
+// workerSrc 정의 하지 않으면 pdf 보여지지 않습니다.
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.mjs`;
+
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+const resumeDetail = ({ params }: Props) => {
+  const supabase = createClient();
+  const [resumeList, setResumeList] = useState<ResumeType[]>([]);
+  const [numPages, setNumPages] = useState(0); // 총 페이지수
+  const [pageNumber, setPageNumber] = useState(1); // 현재 페이지
+  const [pageScale, setPageScale] = useState(1); // 페이지 스케일
+
+  useEffect(() => {
+    const getResumeList = async () => {
+      const { data, error } = await supabase.from('post_detail').select('*').eq('post_id', params.id);
+
+      if (error) {
+        console.error('Error loading ResumeData:', error.message);
+      } else if (data) {
+        console.log('data', data);
+        setResumeList(data);
+      }
+    };
+
+    console.log('params', params);
+    getResumeList();
+  }, []);
+
+  // console.log('resumeList00', resumeList[0].resume_url);
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+    console.log(`numPages ${numPages}`);
+    setNumPages(numPages);
+  }
+
+  return (
+    <>
+      {/* pdf 크기가 1280 * 720이 넘는 경우, overflow 처리 */}
+      <div style={{ width: '1280px', height: '720px', overflow: 'auto' }}>
+        <Document file={`${resumeList[0]?.resume_url}`} onLoadSuccess={onDocumentLoadSuccess}>
+          <Page width={1280} height={720} scale={pageScale} pageNumber={pageNumber} />
+        </Document>
+      </div>
+      <div>
+        <p>
+          Page {pageNumber} of {numPages}
+        </p>
+
+        <p>페이지 이동 버튼</p>
+        <button
+          onClick={() => {
+            setPageNumber(numPages === pageNumber ? pageNumber : pageNumber + 1);
+          }}
+        >
+          {' '}
+          +
+        </button>
+        <button
+          onClick={() => {
+            setPageNumber(pageNumber === 1 ? pageNumber : pageNumber - 1);
+          }}
+        >
+          {' '}
+          -
+        </button>
+
+        <p>페이지 스케일</p>
+        <button
+          onClick={() => {
+            setPageScale(pageScale === 3 ? 3 : pageScale + 0.1);
+          }}
+        >
+          {' '}
+          +
+        </button>
+        <button
+          onClick={() => {
+            setPageScale(pageScale - 1 < 1 ? 1 : pageScale - 1);
+          }}
+        >
+          {' '}
+          -
+        </button>
+      </div>
+    </>
+  );
+};
+
+export default resumeDetail;
