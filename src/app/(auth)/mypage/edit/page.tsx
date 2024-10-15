@@ -43,6 +43,12 @@ const MentoSignUpPage = () => {
       return;
     }
 
+    // NOTE
+    // 사용자가 이미지를 선택했을 경우
+    // user_image / user_id 경로의 모든 이미지를 삭제한 후
+    // 선택한 이미지를 user_image / user_id 경로에 넣고
+    // 이 이미지를 프로필 이미지로 등록
+
     const { data: imgData, error: imgError } = await browserClient.storage
       .from('user_image')
       .upload(`${userId}/${file.name}`, file, {
@@ -70,30 +76,38 @@ const MentoSignUpPage = () => {
         mento_work_experience: watch('mento_work_experience')
       })
       .eq('id', userUid);
-    console.log(userData);
 
     if (updateError) {
-      console.log('회원가입에 실패했습니다 => ', updateError);
+      console.log('회원정보 수정에 실패했습니다 => ', updateError);
     } else {
-      console.log('회원가입에 성공했습니다 =>', userData);
+      console.log('회원정보 수정에 성공했습니다 =>', userData);
 
       router.push('/');
     }
+  };
+  return (
+    <section className="p-4 bg-[#efefef] w-full ">
+      <h1 className="text-2xl font-bold mb-4">회원정보 편집</h1>
 
-    return (
-      <section>
-        <h1>새로운 멘토님, 환영합니다!</h1>
-        <h3>아래에 가입정보를 작성해주세요.</h3>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <label htmlFor="user_name">닉네임</label>
-            <input {...register('user_name')} id="user_name" type="text" required />
+      <article className="flex flex-col items-center bg-white py-32 gap-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-[500px] mb-5">
+          <div className="flex flex-row items-center ">
+            <label htmlFor="user_name" className="w-24 text-xl">
+              이름
+            </label>
+            <input
+              {...register('user_name')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="user_name"
+              type="text"
+              required
+            />
             {formState.errors.user_name && <span>{formState.errors.user_name.message}</span>}
           </div>
           {userType === 'mento' ? (
             <>
-              <div>
-                <label>경력</label>
+              <div className="flex flex-row items-center">
+                <label className="w-24  text-xl">경력</label>
                 <Select onValueChange={(value) => setValue('mento_work_experience', value)}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="경력을 선택해 주세요." />
@@ -105,9 +119,13 @@ const MentoSignUpPage = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <label>현직에서 일하고 계신가요?</label>
-                <RadioGroup onValueChange={(value) => setValue('mento_current', value === 'yes')} defaultValue="no">
+              <div className=" flex flex-row justify-between">
+                <label className="  text-xl">현직에서 일하고 계신가요?</label>
+                <RadioGroup
+                  onValueChange={(value) => setValue('mento_current', value === 'yes')}
+                  defaultValue="no"
+                  className="flex flex-row gap-10"
+                >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="yes" id="yes" />
                     <Label htmlFor="yes">예</Label>
@@ -120,8 +138,10 @@ const MentoSignUpPage = () => {
               </div>
             </>
           ) : null}
-          <div>
-            <label htmlFor="image_url">프로필 이미지 업로드</label>
+          <div className="flex flex-col p-4 bg-[#efefef] gap-3">
+            <label htmlFor="image_url" className="text-xl">
+              프로필 이미지 등록
+            </label>
             <input type="file" accept="image/*" onChange={handleImgUpload} />
           </div>
           <Button
@@ -130,11 +150,11 @@ const MentoSignUpPage = () => {
             }}
             type="submit"
           >
-            회원가입
+            회원정보 수정
           </Button>
         </form>
-      </section>
-    );
-  };
+      </article>
+    </section>
+  );
 };
 export default MentoSignUpPage;

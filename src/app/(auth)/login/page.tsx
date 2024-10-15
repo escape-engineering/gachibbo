@@ -52,14 +52,15 @@ const LoginPage = () => {
   };
 
   type userData = {
-    id: string;
-    email: string;
-    user_id: string;
-    user_name: string;
-    user_type: string;
-    image_url: string;
-    mento_current: boolean;
-    mento_work_experience: string;
+    isLoggedIn: boolean;
+    userUid: string;
+    userId: string;
+    userName: string;
+    userEmail: string;
+    userImg: string;
+    userType: string;
+    mentoCurrent: boolean;
+    mentoWorkExperience: string;
   };
 
   // 폼 제출 함수
@@ -115,7 +116,7 @@ const LoginPage = () => {
         userType: userData.user_type,
         mentoCurrent: userData.mento_current,
         mentoWorkExperience: userData.mento_work_experience
-      });
+      } as userData);
 
       console.log(authData);
       router.push('/');
@@ -123,24 +124,44 @@ const LoginPage = () => {
   };
 
   return (
-    <section>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input {...register('user_id')} type="text" placeholder="아이디" required />
-        {formState.errors.user_id && <span>{formState.errors.user_id.message}</span>}
-        <input {...register('user_pw')} type="password" placeholder="비밀번호" required />
-        {formState.errors.user_pw && <span>{formState.errors.user_pw.message}</span>}
-        <Button
-          onClick={() => {
-            console.log('로그인 폼 제출됨');
-          }}
-          type="submit"
-        >
-          로그인
-        </Button>
-      </form>
-      <div>
-        <p>아직 회원이 아니신가요?</p> <Link href={'/signup'}>회원가입</Link>
-      </div>
+    <section className="p-4 bg-[#efefef] w-full">
+      <h1 className="text-2xl font-bold mb-4">로그인</h1>
+
+      <article className="flex flex-col items-center bg-white py-52">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2 w-80 mb-5">
+          <input
+            {...register('user_id')}
+            className=" border border-gray-300 text-gray-900 text-sm  block w-full p-2.5 "
+            type="text"
+            placeholder="아이디"
+            required
+          />
+          {formState.errors.user_id && (
+            <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_id.message}</span>
+          )}
+          <input
+            {...register('user_pw')}
+            className=" border border-gray-300 text-gray-900 text-sm  block w-full p-2.5 "
+            type="password"
+            placeholder="비밀번호"
+            required
+          />
+          {formState.errors.user_pw && (
+            <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_pw.message}</span>
+          )}
+          <Button
+            onClick={() => {
+              console.log('로그인 폼 제출됨');
+            }}
+            type="submit"
+          >
+            로그인
+          </Button>
+        </form>
+        <div className="flex flex-row gap-4 text-sm">
+          <p>아직 회원이 아니신가요?</p> <Link href={'/signup'}>회원가입</Link>
+        </div>
+      </article>
     </section>
   );
 };

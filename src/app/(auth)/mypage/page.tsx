@@ -4,6 +4,7 @@
 import useAuthStore from '@/store/useAuthStore';
 import { getPoint } from '@/utils/getpoint';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -24,10 +25,15 @@ const Mypage = () => {
     };
     fetchPoint();
   }, [userUid]);
-
+  console.log(mentoCurrent);
   return (
     <section className="p-4 bg-[#efefef] w-full">
-      <h1 className="text-2xl font-bold mb-4">마이 페이지</h1>
+      <div className="flex flex-row gap-4 items-center mb-4">
+        <h1 className="text-2xl font-bold ">마이 페이지</h1>
+        <Link href={'/mypage/edit'} className="bg-[#ddd] py-2 px-3">
+          편집
+        </Link>
+      </div>
 
       <div className="flex flex-row justify-between items-center bg-white p-6">
         {/* 좌측 - 유저 정보(멘토멘티 여부, 이름, ) */}
@@ -35,14 +41,14 @@ const Mypage = () => {
           <img
             src={`${userImg}`}
             alt={`${userName}의 프로필 이미지`}
-            width={145}
-            height={145}
+            width={130}
+            height={130}
             className="rounded-full"
           />{' '}
           <div>
             {userType === 'mento' ? (
-              <div>
-                <span className="text-[#777] text-xl">{mentoCurrent || null}</span>
+              <div className=" flex flex-row gap-2">
+                <span className="text-[#777] text-xl">{mentoCurrent || null ? '현직' : null}</span>
                 <span className="text-[#777] text-xl">{mentoWorkExperience || null}</span>
               </div>
             ) : null}
