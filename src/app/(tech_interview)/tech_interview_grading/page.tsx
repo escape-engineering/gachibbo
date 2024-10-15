@@ -5,7 +5,7 @@ import Link from 'next/link';
 import browserClient from '@/utils/supabase/client';
 
 const TechInterviewGranage = () => {
-  const [responses, setResponses] = useState<MappedResponse[]>([]);
+  const [responses, setResponses] = useState<MappedResponse[]>([]); // 사용자 답변과 기술질문을 엮은 객체의 배열
   const [score, setScore] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [gradedResponses, setGradedResponses] = useState<{
@@ -21,7 +21,7 @@ const TechInterviewGranage = () => {
         .from('tech_sessions')
         .select('tech_session_id')
         .eq('user_uuid', userId)
-        .order('tech_session_create_at', { ascending: false })
+        .order('tech_session_create_at', { ascending: false }) // tech_session_create_at가 timestamp이고 그걸 이용해 최신 순으로 정렬
         .limit(1)
         .single();
 
@@ -31,7 +31,7 @@ const TechInterviewGranage = () => {
         return;
       }
 
-      // 해당 세션의 기술문제와 사용자 답변 가져오기
+      // 해당 세션의 기술문제 목록과 사용자 답변 목록 가져오기
       const { data: responseList, error: responsesError } = await supabase
         .from('tech_responses')
         .select('tech_question_id, tech_user_answer')
@@ -54,9 +54,9 @@ const TechInterviewGranage = () => {
         return;
       }
 
-      // 사용자 답변과 질문을 묶어 객체로 정리
+      // 사용자 답변과 기술문제를 묶어 객체로 정리
       const mappedResponses = responseList.map((response) => {
-        const question = questionList.find((q) => q.tech_question_id === response.tech_question_id);
+        const question = questionList.find((q) => q.tech_question_id === response.tech_question_id); // 해당 기술문제를 찾기
         return {
           ...response,
           tech_question_text: question?.tech_question_text,
@@ -66,16 +66,17 @@ const TechInterviewGranage = () => {
 
       setResponses(mappedResponses);
 
-      // 각 질문의 채점 상태를 null로 초기화
-      const initialGradedResponses = mappedResponses.reduce(
-        (acc, response) => ({
-          ...acc,
-          [response.tech_question_id]: null
-        }),
-        {}
-      );
+      // 각 기술질문의 tech_question_id가 키로 사용
+      // true는 사용자가 o 버튼 눌렀을 때, false는 사용자가 x 버튼 눌렀을 때, null은 채점 안했을 때
+      // 처음은 비어있는 객체
+      const initialGrad: Record<string, boolean | null> = {};
 
-      setGradedResponses(initialGradedResponses);
+      // mappedResponses를 반복하며 각 기술질문의 tech_question_id를 키로 하고, 값을 null로 설정
+      mappedResponses.forEach((response) => {
+        initialGrad[response.tech_question_id] = null;
+      });
+
+      setGradedResponses(initialGrad);
       setLoading(false);
     };
 
@@ -88,9 +89,9 @@ const TechInterviewGranage = () => {
 
     // 현재 상태에 따라 증가 또는 감소
     if (currentGrade === null) {
-      setScore((prevScore) => prevScore + (isCorrect ? 1 : 0));
+      setScore((prevScore) => prevScore + (isCorrect ? 1 : 0)); // 처음은 null이니까 1이거나 0
     } else if (currentGrade !== isCorrect) {
-      setScore((prevScore) => prevScore + (isCorrect ? 1 : -1));
+      setScore((prevScore) => prevScore + (isCorrect ? 1 : -1)); // 다음부터는 x면 -1, o면 +1
     }
 
     setGradedResponses((prev) => ({

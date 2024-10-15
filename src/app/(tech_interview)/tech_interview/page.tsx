@@ -10,17 +10,18 @@ const TestPage = () => {
   const [answers, setAnswers] = useState<{ [key: string]: string }>({});
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false); // 제출 했을 때만 채점페이지로 이동 가능하게 하기 위해 상태관리
   const userId = '2cc0b3c7-661a-4631-a6f8-6a204b89976c'; // TODO:  대체 필요
-  const sessionCreated = useRef(false);
+  const sessionCreated = useRef(false); // 세션이 한번에 한개만 생성되도록 관리
   const supabase = browserClient;
 
-  // 한 사이클을 tech_sessions 테이블에 저장하기 위해 초기화
   useEffect(() => {
     const initializeTest = async () => {
+      // 한번에 세션 아이디가 두개씩 생기는걸 방지
       if (sessionCreated.current) return;
       sessionCreated.current = true;
 
+      // 한 사이클을 tech_sessions (세션)테이블에 저장하기 위해 생성
       const { data: sessionData, error: sessionError } = await supabase
         .from('tech_sessions')
         .insert({ user_uuid: userId })
@@ -33,8 +34,11 @@ const TestPage = () => {
         return;
       }
 
+      // tech_responses 테이블에 session_id도 저장이 필요하기 때문에
+      // 위에서 sessionData를 생성하면서 응답으로 받은 session_id를 관리
       setSessionId(sessionData.tech_session_id);
 
+      // 모든 기술문제 가져오기
       const { data: allQuestions, error: questionsError } = await supabase.from('tech_questions').select('*');
 
       if (questionsError) {
@@ -43,6 +47,8 @@ const TestPage = () => {
         return;
       }
 
+      // 기술문제 전체에서 랜덤으로 정렬하고 5개만 뽑아내기
+      // 0.5에서 0과 1사이의 난수를 빼서 양수, 0, 음수가 무작위로 나오고 sort로 섞어짐
       const randomQuestions = allQuestions.sort(() => 0.5 - Math.random()).slice(0, 5);
 
       setQuestions(randomQuestions);
@@ -52,6 +58,7 @@ const TestPage = () => {
     initializeTest();
   }, []);
 
+  // 사용자 답변 상태 관리
   const handleAnswerChange = (questionId: string, answer: string) => {
     setAnswers((prev) => ({
       ...prev,
@@ -59,20 +66,24 @@ const TestPage = () => {
     }));
   };
 
+  // 사용자 답변 제출
   const handleSubmit = async () => {
     if (!sessionId) return;
 
-    const unansweredQuestions = questions.filter(
-      (q) => !answers[q.tech_question_id] || answers[q.tech_question_id].trim() === ''
+    // 답변이 없는 문항이 있는지 확인
+    const unAnsweredQuestions = questions.filter(
+      (question) => !answers[question.tech_question_id] || answers[question.tech_question_id].trim() === ''
     );
 
-    if (unansweredQuestions.length > 0) {
+    // 해당 기술문제에 대한 사용자 답변이 비어있거나 공백이면 걸러짐
+    if (unAnsweredQuestions.length > 0) {
       alert('모든 질문에 대해 답변을 입력해 주세요.');
       return;
     }
 
+    // 각 기술문제에 대한 사용자 답변 tech_responses 테이블에 저장
     for (const question of questions) {
-      const userAnswer = answers[question.tech_question_id];
+      const userAnswer = answers[question.tech_question_id]; // 해당 질문에 대한 사용자 답변
 
       const { error } = await supabase.from('tech_responses').insert({
         tech_session_id: sessionId,
@@ -87,7 +98,7 @@ const TestPage = () => {
     }
 
     alert('답변이 성공적으로 제출되었습니다!');
-    setIsSubmitted(true); // 제출 완료 상태로 설정
+    setIsSubmitted(true); // 제출 완료 상태로 설정, 채점하러가기 버튼이 활성화 됨
   };
 
   if (loading) {
