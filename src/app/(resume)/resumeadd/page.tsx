@@ -530,105 +530,134 @@ const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
     doc.save(`${title ? title : '이력서'}`);
   };
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row pl-[257px]">
       <SideBarByPage>
         <div className="flex flex-col gap-[10px]">
+          {/* <button
+            onClick={async () => {
+              await browserClient.auth.signInWithPassword({
+                email: 'yt@yt.com',
+                password: 'ytytyt'
+              });
+            }}
+          >
+            임시로그인
+          </button> */}
           <Button onClick={() => openNewTabForPdf()}>미리보기</Button>
           <Button onClick={() => (query_post_id ? updatePdfToStorage() : uploadPdfToStorage())}>이력서 등록</Button>
           <Button onClick={() => savePdfToLocal()}>이력서 저장</Button>
         </div>
       </SideBarByPage>
-      <div>
-        <section id="resumeTitleSection">
-          <Input placeholder="OOO님의 이력서" value={title} onChange={handleTitle} ref={titleRef} />
-          <Input isLabeled={true} labelText="*채택 포인트 : " value={point} onChange={handlePoint} ref={pointRef} />
+      <div className=" border border-solid border-black flex flex-col justify-center items-center gap-[20px] py-[20px] w-[calc(100vw-303px)]">
+        <section id="resumeTitleSection" className="flex flex-row justify-center gap-[10px]">
+          <Input placeholder="OOO님의 이력서" size="lg" value={title} onChange={handleTitle} ref={titleRef} />
+          <Input
+            isLabeled={true}
+            labelText="*채택 포인트 : "
+            value={point}
+            onChange={handlePoint}
+            ref={pointRef}
+            size="sm"
+          />
         </section>
-        <div className="flex flex-col justify-start items-center py-[5px]">
-          <section className="flex flex-row gap-[30px]">
-            <div>
-              <label htmlFor="profileImg">프로필 이미지 첨부</label>
-              <input
-                id="profileImg"
-                type="file"
-                className="hidden"
-                onChange={(e) => handleProfileImg(e)}
-                accept="image/png" //NOTE - pdf설정때문에 png만 가능하게 했음, 추가방식 고민해보겠음
-              />
-            </div>
-            <div>
-              <Input
-                isLabeled={true}
-                labelText="*이름 : "
-                name="name"
-                value={name}
-                onChange={handleName}
-                ref={nameRef}
-              />
-              <Input
-                isLabeled={true}
-                labelText="*성별 : "
-                name="gender"
-                value={gender}
-                onChange={handleGender}
-                ref={genderRef}
-                placeholder="남성/여성"
-              />
-              <Input
-                isLabeled={true}
-                labelText="*전화번호 : "
-                name="phoneNum"
-                value={phoneNum}
-                onChange={handlePhoneNum}
-                ref={phoneNumRef}
-                placeholder="010-0000-0000"
-              />
-              <Input
-                isLabeled={true}
-                labelText="*이메일 : "
-                name="email"
-                value={email}
-                onChange={handleEmail}
-                ref={emailRef}
-                placeholder="example@ex.com"
-              />
-              <Input
-                isLabeled={true}
-                labelText="*주소 : "
-                name="address"
-                value={address}
-                onChange={handleAddress}
-                ref={addressRef}
-              />
-              <Input
-                isLabeled={true}
-                labelText="*근무희망지 : "
-                name="region"
-                value={region}
-                onChange={handleRegion}
-                ref={regionRef}
-              />
-              <Input
-                isLabeled={true}
-                labelText="*경력 : "
-                name="experience"
-                type="number"
-                value={expYears}
-                onChange={handleExpYears}
-                ref={expYearsRef}
-              />
-            </div>
-          </section>
-          <section>
-            <div className="flex flex-row gap-[5px] my-[5px]">
-              <p className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
-                학력
-              </p>
-              <Button onClick={() => addForm('education')}>+</Button>
-            </div>
+        <section className="flex flex-row gap-[30px] justify-center items-center">
+          <div>
+            <label htmlFor="profileImg">
+              {profileImg ? (
+                <img
+                  src={`${URL.createObjectURL(profileImg)}`}
+                  className="flex justify-center items-center rounded-[20px] w-[200px] h-[267px] border-[2px] border-black border-solid"
+                />
+              ) : (
+                <div className="flex justify-center items-center rounded-[20px] px-[5px] w-[200px] h-[267px] bg-[#e6e6e6] border-[5px] border-black border-dashed">
+                  <p>프로필 이미지 첨부</p>
+                </div>
+              )}
+            </label>
+            <input
+              id="profileImg"
+              type="file"
+              className="hidden"
+              onChange={(e) => handleProfileImg(e)}
+              accept="image/png" //NOTE - pdf설정때문에 png만 가능하게 했음, 추가방식 고민해보겠음
+            />
+          </div>
+          <div className="flex flex-col justify-center items-start gap-[10px]">
+            <Input
+              isLabeled={true}
+              labelText="*경력 : "
+              name="experience"
+              size="sm"
+              value={expYears}
+              onChange={handleExpYears}
+              ref={expYearsRef}
+            />
+            <Input isLabeled={true} labelText="*이름 : " name="name" value={name} onChange={handleName} ref={nameRef} />
+            <Input
+              isLabeled={true}
+              labelText="*성별 : "
+              name="gender"
+              value={gender}
+              onChange={handleGender}
+              ref={genderRef}
+              placeholder="남성/여성"
+            />
+            <Input
+              isLabeled={true}
+              labelText="*이메일 : "
+              name="email"
+              value={email}
+              onChange={handleEmail}
+              ref={emailRef}
+              placeholder="example@ex.com"
+            />
+            <Input
+              isLabeled={true}
+              labelText="*전화번호 : "
+              name="phoneNum"
+              value={phoneNum}
+              onChange={handlePhoneNum}
+              ref={phoneNumRef}
+              placeholder="010-0000-0000"
+            />
+            <Input
+              isLabeled={true}
+              labelText="*근무희망지 : "
+              name="region"
+              value={region}
+              onChange={handleRegion}
+              ref={regionRef}
+            />
+            <Input
+              isLabeled={true}
+              labelText="*주소 : "
+              size="long"
+              name="address"
+              value={address}
+              onChange={handleAddress}
+              ref={addressRef}
+            />
+          </div>
+        </section>
+        <section>
+          <div className="flex flex-row gap-[5px] my-[10px]">
+            <p className="flex justify-start items-center w-[500px] px-[10px] border-b-2 border-black border-solid">
+              학력
+            </p>
+            <Button onClick={() => addForm('education')}>+</Button>
+          </div>
+          <ul className="flex flex-col items-center gap-[15px]">
             {eduArray.map((edu, idx) => {
               return (
-                <div key={edu.edu_id} className="flex flex-col gap-[10px]">
-                  <button onClick={() => deleteForm('education', edu.edu_id)}>삭제</button>
+                <li
+                  key={edu.edu_id}
+                  className="flex flex-col gap-[10px] border border-black border-solid w-[350px] p-[20px] rounded-[20px]"
+                >
+                  <div className="flex justify-end">
+                    <button className="w-[13px]" onClick={() => deleteForm('education', edu.edu_id)}>
+                      <img src="/assets/modalCloseButton.png" alt="X" />
+                    </button>
+                  </div>
                   <div className="flex flex-col gap-[10px]">
                     <Input
                       isLabeled={true}
@@ -650,21 +679,30 @@ const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
                       onChange={(e) => handleArray(idx, 'major', setEduArray, e)}
                     />
                   </div>
-                </div>
+                </li>
               );
             })}
-          </section>
-          <section>
-            <div className="flex flex-row gap-[5px] my-[5px]">
-              <div className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
-                경력사항
-              </div>
-              <Button onClick={() => addForm('experience')}>+</Button>
+          </ul>
+        </section>
+        <section>
+          <div className="flex flex-row gap-[5px] my-[10px]">
+            <div className="flex justify-start items-center w-[500px] px-[10px] border-b-2 border-black border-solid">
+              경력사항
             </div>
+            <Button onClick={() => addForm('experience')}>+</Button>
+          </div>
+          <ul className="flex flex-col items-center gap-[15px]">
             {expArray.map((exp, idx) => {
               return (
-                <div key={exp.exp_id} className="flex flex-col gap-[10px]">
-                  <button onClick={() => deleteForm('experience', exp.exp_id)}>삭제</button>
+                <li
+                  key={exp.exp_id}
+                  className="flex flex-col gap-[10px] border border-black border-solid w-[350px] p-[20px] rounded-[20px]"
+                >
+                  <div className="flex justify-end">
+                    <button className="w-[13px]" onClick={() => deleteForm('experience', exp.exp_id)}>
+                      <img src="/assets/modalCloseButton.png" alt="X" />
+                    </button>
+                  </div>
                   <div className="flex flex-col gap-[10px]">
                     <Input
                       isLabeled={true}
@@ -694,21 +732,30 @@ const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
                       placeholder="내일배움캠프 클라이언트 DB관리"
                     />
                   </div>
-                </div>
+                </li>
               );
             })}
-          </section>
-          <section>
-            <div className="flex flex-row gap-[5px] my-[5px]">
-              <div className="flex justify-start items-center w-[552px] px-[10px] border-b-2 border-black border-solid">
-                보유기술 / 자격증
-              </div>
-              <Button onClick={() => addForm('license')}>+</Button>
+          </ul>
+        </section>
+        <section>
+          <div className="flex flex-row gap-[5px] my-[10px]">
+            <div className="flex justify-start items-center w-[500px] px-[10px] border-b-2 border-black border-solid">
+              보유기술 / 자격증
             </div>
+            <Button onClick={() => addForm('license')}>+</Button>
+          </div>
+          <ul className="flex flex-col items-center gap-[15px]">
             {licArray.map((lic, idx) => {
               return (
-                <div key={lic.lic_id} className="flex flex-col gap-[10px]">
-                  <button onClick={() => deleteForm('license', lic.lic_id)}>삭제</button>
+                <li
+                  key={lic.lic_id}
+                  className="flex flex-col gap-[10px] border border-black border-solid w-[350px] p-[20px] rounded-[20px]"
+                >
+                  <div className="flex justify-end">
+                    <button className="w-[13px]" onClick={() => deleteForm('license', lic.lic_id)}>
+                      <img src="/assets/modalCloseButton.png" alt="X" />
+                    </button>
+                  </div>
                   <div className="flex flex-col gap-[10px]">
                     <Input
                       isLabeled={true}
@@ -732,24 +779,24 @@ const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
                       placeholder="한국산업인력공단"
                     />
                   </div>
-                </div>
+                </li>
               );
             })}
-          </section>
-          <section>
-            <div>
-              <label htmlFor="resumeDescription">*내용 입력</label>
-              <textarea
-                id="resumeDescription"
-                className="w-[800px] min-h-[600px] "
-                placeholder="이력서 피드백 혹은 추가자료 관련 작성하고 싶은 내용을 적어주세요."
-                value={resumeDesc}
-                onChange={handleResumeDesc}
-                ref={resumeDescRef}
-              />
-            </div>
-          </section>
-        </div>
+          </ul>
+        </section>
+        <section>
+          <div className="flex flex-col justify-start">
+            {/* <label htmlFor="resumeDescription">*내용 입력</label> */}
+            <textarea
+              id="resumeDescription"
+              className="rounded-[20px] border border-[#919191] py-[15px] px-[10px] border-solid w-[800px] min-h-[150px] focus:outline-none"
+              placeholder="이력서 피드백 혹은 추가자료 관련 작성하고 싶은 내용을 적어주세요."
+              value={resumeDesc}
+              onChange={handleResumeDesc}
+              ref={resumeDescRef}
+            />
+          </div>
+        </section>
       </div>
     </div>
   );
