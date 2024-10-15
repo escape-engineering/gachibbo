@@ -17,3 +17,21 @@ export interface LicenseType {
   lic_title: string;
   lic_agency: string;
 }
+
+export interface ResumeType {
+  user_uuid: string;
+  post_id: string;
+  use_point: number;
+  isadopted: boolean;
+  experience: number;
+  region: string;
+  post_title: string;
+  resume_url: string;
+  portfolio_url: string;
+  post_desc: string;
+  name: string;
+  gender: string;
+  phoneNum: string;
+  email: string;
+  address: string;
+};
