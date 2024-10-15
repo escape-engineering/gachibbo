@@ -5,10 +5,10 @@ import Link from 'next/link';
 import React from 'react';
 
 const SideBar = () => {
-  const { isLoggedIn, logout, loading } = useAuthStore(); // 로그아웃 함수 가져오기
+  const { isLoggedIn, logout, loading } = useAuthStore();
 
   const handleLogout = () => {
-    logout(); // 로그아웃 함수 호출
+    logout(); // 로그아웃
   };
 
   return (

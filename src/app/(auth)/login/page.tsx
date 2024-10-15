@@ -12,7 +12,8 @@ import useAuthStore from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
-  const { isLoggedIn } = useAuthStore();
+  const router = useRouter();
+  // const { isLoggedIn } = useAuthStore();
   // const router = useRouter();
 
   // // 이미 로그인한 사용자인지 구분해서 접근막기
@@ -29,7 +30,7 @@ const LoginPage = () => {
   });
 
   // 리액트 훅 폼으로 유효성 검사
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, watch } = useForm({
     mode: 'onChange',
     defaultValues: {
       user_id: '',
@@ -61,7 +62,7 @@ const LoginPage = () => {
     // auth 테이블에서 id와 일치하는 행의 이메일을 가져옴
     const { data: userData, error: userError } = await supabase
       .from('auth')
-      .select('email')
+      .select('email, user_id, user_name, user_type, image_url, mento_current, mento_work_experience')
       .eq('user_id', formData.user_id)
       .single();
 
@@ -72,7 +73,7 @@ const LoginPage = () => {
 
     // 위에서 가져온 이메일로 로그인
     const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email: userData?.email,
+      email: userData.email,
       password: formData.user_pw
     });
 
@@ -80,8 +81,17 @@ const LoginPage = () => {
     if (authData) {
       useAuthStore.setState({
         isLoggedIn: true,
-        userId: formData.user_id
+        userId: userData.user_id,
+        userName: userData.user_name,
+        userEmail: userData.email,
+        userImg: userData.image_url,
+        userType: userData.user_type,
+        mentoCurrent: userData.mento_current,
+        mentoWorkExperience: userData.mento_work_experience
       });
+
+      console.log(authData);
+      router.push('/');
     }
   };
 

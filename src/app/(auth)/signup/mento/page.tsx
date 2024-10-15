@@ -13,15 +13,15 @@ import useAuthStore from '@/store/useAuthStore';
 import { useRouter } from 'next/navigation';
 
 const MentoSignUpPage = () => {
-  const { isLoggedIn } = useAuthStore();
-  const router = useRouter();
+  // const { isLoggedIn } = useAuthStore();
+  // const router = useRouter();
 
-  // 이미 로그인한 사용자인지 구분해서 접근막기
-  useEffect(() => {
-    if (isLoggedIn) {
-      router.replace('/');
-    }
-  }, [isLoggedIn, router]);
+  // // 이미 로그인한 사용자인지 구분해서 접근막기
+  // useEffect(() => {
+  //   if (isLoggedIn) {
+  //     router.replace('/');
+  //   }
+  // }, [isLoggedIn, router]);
 
   //zod
   const signUpSchema = z.object({
@@ -48,7 +48,7 @@ const MentoSignUpPage = () => {
       user_type: 'mentee',
       email: '',
       user_name: '',
-      image_url: '',
+      image_url: 'https://tjpmmmdahokzcxwqfsjn.supabase.co/storage/v1/object/public/user_image/avatar.png',
       mento_current: false,
       mento_work_experience: ''
     },
@@ -126,9 +126,9 @@ const MentoSignUpPage = () => {
               <SelectValue placeholder="경력을 선택해 주세요." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="1~2">1~2 년</SelectItem>
-              <SelectItem value="3~5">3~5 년</SelectItem>
-              <SelectItem value="6~">6년 이상</SelectItem>
+              <SelectItem value="1~2">1~2 년차 주니어</SelectItem>
+              <SelectItem value="3~5">3~5 년차 시니어</SelectItem>
+              <SelectItem value="6~">6년 이상 리더</SelectItem>
             </SelectContent>
           </Select>
         </div>

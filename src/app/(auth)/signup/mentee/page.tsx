@@ -36,6 +36,20 @@ const MenteeSignUpPage = () => {
     image_url: z.string().optional() // 이미지 URL은 선택 사항
   });
 
+  // 리액트 훅 폼으로 유효성 검사
+  const { register, handleSubmit, formState, watch, setValue } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      user_id: '',
+      user_pw: '',
+      user_type: 'mentee',
+      email: '',
+      user_name: '',
+      image_url: 'https://tjpmmmdahokzcxwqfsjn.supabase.co/storage/v1/object/public/user_image/avatar.png'
+    },
+    resolver: zodResolver(signUpSchema)
+  });
+
   // 프로필 이미지 등록 핸들러
   const handleImgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -45,30 +59,23 @@ const MenteeSignUpPage = () => {
       return;
     }
 
+    const userId = watch('user_id');
+
     const { data: imgData, error: imgError } = await browserClient.storage
-      .from('profile_img')
-      .upload(`${user_id}/${file.name}`, file, {
+      .from('user_image')
+      .upload(`${userId}/${file.name}`, file, {
         cacheControl: '3600',
         upsert: false
       });
     if (imgError) {
       console.log('이미지 오류 => ', imgError);
     }
-  };
 
-  // 리액트 훅 폼으로 유효성 검사
-  const { register, handleSubmit, formState, watch } = useForm({
-    mode: 'onChange',
-    defaultValues: {
-      user_id: '',
-      user_pw: '',
-      user_type: 'mentee',
-      email: '',
-      user_name: '',
-      image_url: ''
-    },
-    resolver: zodResolver(signUpSchema)
-  });
+    // 업로드된 이미지의 URL 가져오기
+    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_image/${userId}/${file.name}`;
+
+    setValue('image_url', imageUrl);
+  };
 
   // 폼 제출 함수
   const onSubmit = async () => {
