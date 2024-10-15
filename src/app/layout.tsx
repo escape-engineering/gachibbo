@@ -33,8 +33,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          <SideBar />
-          {children}
+          <div className="flex flex-row">
+            <SideBar />
+            {children}
+          </div>
           <ReactQueryDevtools />
         </Providers>
       </body>

@@ -255,16 +255,16 @@ const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
   };
   //NOTE - 포인트 초과 검사 로직
   const isUsablePoint = async (use_point: number | string) => {
-    const { data: userSession, error: userSessionError } = await browserClient.auth.getSession();
-    if (userSessionError) {
-      console.log('userSessionError :>> ', userSessionError);
-    } else {
-      // console.log('userSession :>> ', userSession);
-    }
+    // const { data: userSession, error: userSessionError } = await browserClient.auth.getSession();
+    // if (userSessionError) {
+    //   console.log('userSessionError :>> ', userSessionError);
+    // } else {
+    //   // console.log('userSession :>> ', userSession);
+    // }
     const { data: userPointData, error: userPointError } = await browserClient
       .from('point')
       .select('user_point')
-      .eq('user_id', userSession.session?.user.id);
+      .eq('user_id', userId);
     if (userPointError) throw new Error(userPointError.message);
     const remainPoint = userPointData[0].user_point;
     console.log('remainPoint :>> ', remainPoint);
