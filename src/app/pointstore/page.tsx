@@ -8,6 +8,7 @@ import { product } from '@/type/PointTypes';
 const PointStorePage = () => {
   const supabase = createClient();
   const [points, setPoints] = useState(0);
+  const [productName, setProductName] = useState('');
 
   useEffect(() => {
     //포인트 data 가져오기
@@ -58,7 +59,12 @@ const PointStorePage = () => {
     <>
       <div>
         <header>
-          <input placeholder="상품명 검색" />
+          <input
+            placeholder="상품명 검색"
+            type="text"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+          />
           <h1>포인트 샵</h1>
         </header>
         <div>
@@ -78,9 +84,6 @@ const PointStorePage = () => {
         })}
       </div>
       <div>내 포인트 : {points}</div>
-      {/* <button onClick={() => buyProduct()} className="border-solid border-2 border-black">
-        상품, 포인트 차감 : 1p
-      </button> */}
     </>
   );
 };

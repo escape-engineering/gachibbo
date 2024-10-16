@@ -28,6 +28,7 @@ const resumeDetail = ({ params }: Props) => {
   const [isAdopted, setIsAdopted] = useState(false);
   const [points, setPoints] = useState(0);
   const [usePoints, setUsePoints] = useState(0);
+  const [userType, setUserType] = useState('');
 
   useEffect(() => {
     const getResumeList = async () => {
@@ -80,6 +81,17 @@ const resumeDetail = ({ params }: Props) => {
         console.log('usePoint test', usePointData[0]?.use_point);
         setUsePoints(usePointData[0]?.use_point);
       }
+      //멘토/멘티 상태값 가져오기
+      const { data: userTypeData, error: userTypeError } = await supabase
+        .from('auth')
+        .select('user_type')
+        .eq('id', '2cc0b3c7-661a-4631-a6f8-6a204b89976c');
+      if (userTypeError) {
+        console.error('Error fetching data usertype : ', userTypeError.message);
+      } else if (userTypeData) {
+        console.log('usertype test', userTypeData[1]?.user_type);
+        setUserType(userTypeData[1]?.user_type);
+      }
     };
 
     getPointAndIsAdopted();
@@ -125,7 +137,7 @@ const resumeDetail = ({ params }: Props) => {
       console.log('updateisadoptedData : ', data); // 함수 정상 작동
       setIsAdopted(!isAdopted);
     } else {
-      alert('동작 그만 밑장빼기냐?');
+      alert('이미 채택된 게시글입니다');
     }
   };
   //is
@@ -134,10 +146,11 @@ const resumeDetail = ({ params }: Props) => {
       updateUserPointInResume(usePoints);
     }
   }, [isAdopted]);
+
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
-      <div className='postDetailMainBox'>
+      <div className="postDetailMainBox">
         {/* pdf 크기가 1280 * 720이 넘는 경우, overflow 처리 */}
         <div style={{ width: '1280px', height: '720px', overflow: 'auto' }}>
           <Document file={`${resumeList[0]?.resume_url}`} onLoadSuccess={onDocumentLoadSuccess}>
@@ -187,12 +200,14 @@ const resumeDetail = ({ params }: Props) => {
           </button>
         </div>
         <hr />
-        
+
         <div className="border-2">
           ResumePage{points}
-          {isAdopted}<br/>
+          {isAdopted}
+          <br />
           {usePoints}
-          <button onClick={() => handleAdoption()}> 채택 완료</button>
+          {/* 멘토가 아닐 시에만 채택하기 버튼 뜨게 함 */}
+          {userType === 'mentee' ? <button onClick={() => handleAdoption()}> 채택하기 </button> : ''}
         </div>
       </div>
     </>
