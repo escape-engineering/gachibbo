@@ -11,8 +11,9 @@ const ResumePage = () => {
   const supabase = createClient();
   const [resumeList, setResumeList] = useState<ResumeType[]>([]);
   const [page, setPage] = useState(1);
-  
-  const total = 50;
+  const [items, setItems] = useState(10);
+
+  const total = resumeList.length;
   const limit = 10;
   const offset = (page - 1) * limit;
 
@@ -36,7 +37,7 @@ const ResumePage = () => {
     <div className="mainBox">
       <h1>테스트</h1>
       <div className="postBox">
-        {resumeList.map((resume) => {
+        {resumeList.slice(items * (page - 1), items * (page - 1) + items).map((resume) => {
           return (
             <Link className="postEach" key={resume.post_id} href={`resume/${resume.post_id}`}>
               <p>{resume.portfolio_url}</p>

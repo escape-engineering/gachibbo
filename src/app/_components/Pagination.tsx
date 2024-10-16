@@ -24,7 +24,7 @@ const PaginationComponent = ({
           }}
           disabled={page === 1}
         >
-          &ga;
+          &lt;
         </button>
         {Array(pageNum)
           .fill(0)
