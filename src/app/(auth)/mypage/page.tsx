@@ -28,7 +28,6 @@ const Mypage = () => {
     fetchPoint();
   }, [userUid]);
 
-  console.log(mentoCurrent);
   return (
     <section className="p-4 bg-[#efefef] w-full">
       <div className="flex flex-row gap-4 items-center mb-4">
