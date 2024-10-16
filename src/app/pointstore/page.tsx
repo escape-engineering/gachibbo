@@ -90,12 +90,14 @@ const PointStorePage = () => {
       console.log('업데이트 완료 : ', data);
     }
     console.log('업데이트데이터 : ', data); // 함수 정상 작동
-    console.log('Current points:', typeof points, points);
+
     const buyProduct = (price: number) => {
-      setPoints(points - price);
+      points > price ? setPoints(points - price) : alert('포인트가 부족합니다');
     };
     buyProduct(price);
   };
+
+  console.log('Current points:', typeof points, points);
 
   return (
     <div className="pl-[92px] w-full flex flex-col justify-start items-center py-[50px] gap-[50px]">
@@ -113,7 +115,7 @@ const PointStorePage = () => {
         <div className="flex justify-center">
           <h3 className="text-[36px] font-medium">추천 상품</h3>
         </div>
-        {/* <div>내 포인트 : {points}</div> */}
+        <div>내 포인트 : {points}</div>
       </header>
       <ul className="w-auto h-auto grid place-content-center grid-cols-4 justify-center gap-4">
         {productList.map((product: Product) => {
