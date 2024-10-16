@@ -41,4 +41,6 @@ export interface CommentType {
   post_id: string;
   user_uuid: string;
   feedback_desc: string;
+  feedback_isSelected: boolean;
+  user_name: string;
 }

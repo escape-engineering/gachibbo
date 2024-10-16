@@ -16,7 +16,7 @@ const Page = () => {
   const fetchFeedbacks = async (userUid: string) => {
     const { data, error } = await supabase
       .from('post_feedback')
-      .select(`user_uuid, post_id, feedback_desc, feedback_isSelected, post_detail (post_title)`)
+      .select(`user_uuid, post_id, feedback_desc, feedback_isSelected, created_at, post_detail(post_title)`)
       .eq('user_uuid', userUid);
     if (error) {
       console.error('error => ', error);
@@ -71,7 +71,11 @@ const Page = () => {
               {/* <Link href={}> */}
               {/* 우측: 게시글 제목 & 피드백 내용 */}
               <div>
-                <h2 className="text-lg font-semibold">{feedback.post_detail.post_title}</h2>
+                <h2 className="text-lg font-semibold">
+                  {Array.isArray(feedback.post_detail)
+                    ? feedback.post_detail[index].post_title
+                    : feedback.post_detail.post_title}
+                </h2>
                 <p className="text-sm text-gray-600 mt-2">{feedback.feedback_desc}</p>
               </div>
 
