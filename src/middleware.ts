@@ -64,16 +64,20 @@ export function middleware(request: NextRequest) {
     const currentUser = request.cookies.get(allCookies[0].name)?.value;
 
     // 로그인된 사용자가 /login, /signup/mentee, /signup/mento에 접근하는 경우 홈으로 리다이렉트
-    const redirectPaths = ['/login', '/signup/mentee', '/signup/mento'];
+    const redirectPaths = ['/login', '/signup/mentee', '/signup/mento', '/tech_interview', '/resumeadd'];
     if (currentUser && redirectPaths.includes(request.nextUrl.pathname)) {
       return NextResponse.redirect(new URL('/', request.url));
     }
+
+    // 만약 멘토인 사용자가 접근하는 경우
+
+    // 만약 멘티인 사용자가 접근하는 경우
   }
   return NextResponse.next();
 }
 export const config = {
   // 이 Middleware가 동작할 경로들을 추가해주면된다.
-  matcher: ['/login', '/signup/mentee', '/signup/mento', '/mypage']
+  matcher: ['/login', '/signup/mentee', '/signup/mento', '/mypage', '/tech_interview', '/resumeadd']
 };
 
 //==================페이지 리다이렉트 2

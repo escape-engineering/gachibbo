@@ -25,6 +25,7 @@ const Mypage = () => {
     };
     fetchPoint();
   }, [userUid]);
+
   console.log(mentoCurrent);
   return (
     <section className="p-4 bg-[#efefef] w-full">
@@ -38,13 +39,13 @@ const Mypage = () => {
       <div className="flex flex-row justify-between items-center bg-white p-6">
         {/* 좌측 - 유저 정보(멘토멘티 여부, 이름, ) */}
         <div className="flex flex-row items-center gap-5">
-          <img
-            src={`${userImg}`}
-            alt={`${userName}의 프로필 이미지`}
-            width={130}
-            height={130}
-            className="rounded-full"
-          />{' '}
+          <div>
+            <img
+              src={userImg !== null ? `${userImg}?rev=${Date.now()} ` : ``}
+              alt={`${userName}의 프로필 이미지`}
+              className="rounded-full w-32 h-32 object-cover"
+            />{' '}
+          </div>
           <div>
             {userType === 'mento' ? (
               <div className=" flex flex-row gap-2">

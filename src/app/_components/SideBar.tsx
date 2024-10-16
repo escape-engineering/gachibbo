@@ -30,7 +30,7 @@ const SideBar = () => {
       <div>
         <img
           className="border border-black border-solid w-[40px] h-[40px]"
-          src={`${userImg}`}
+          src={userImg !== null ? `${userImg}?rev=${Date.now()} ` : ``}
           alt={`${userName}의 프로필 이미지`}
         />
       </div>
