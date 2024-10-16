@@ -95,35 +95,43 @@ const PointStorePage = () => {
   };
 
   return (
-    <>
-      <div>
-        <header>
+    <div className="pl-[92px] w-full flex flex-col justify-start items-center py-[50px] gap-[50px]">
+      <header className="w-full flex flex-col items-center gap-[30px]">
+        <div className="w-full flex flex-row justify-around">
           <input
             placeholder="상품명 검색"
             type="text"
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
+            className="rounded-[15px] w-[378px] h-[50px] text-[20px] bg-[#78ff8a] px-[10px] focus:outline-none"
           />
-          <h1>포인트 샵</h1>
-        </header>
-        <div>
-          <h3>추천 상품</h3>
+          <h1 className="flex justify-center items-center text-[40px] font-bold">포인트 샵</h1>
         </div>
-      </div>
-      <div className="w-10/12 h-auto grid grid-cols-5 border-solid border-2 border-black gap-4	">
+        <div className="flex justify-center">
+          <h3 className="text-[36px] font-medium">추천 상품</h3>
+        </div>
+        {/* <div>내 포인트 : {points}</div> */}
+      </header>
+      <ul className="w-auto h-auto grid place-content-center grid-cols-4 justify-center gap-4">
         {productList.map((product: Product) => {
           return (
-            <ul key={product.created_at} className="w-22 h-auto border-solid border-2 border-black ">
-              <li>{product.product_name}</li>
-              <img src={product.product_image} />
-              <li>{product.product_price}</li>
-              <button onClick={() => updatePoint(product.product_price)}>구매하기</button>
-            </ul>
+            <li key={product.created_at} className="rounded-[20px] w-[313px] h-auto p-[18px] bg-[#f8efdf]">
+              <div className="rounded-[20px] flex flex-col gap-[20px] justify-center items-center w-[277px] h-[332px] bg-gradient-to-b from-[#f5d9a8] to-[#f8efdf]">
+                <img className="w-[150px] h-[150px] object-contain rounded-[75px]" src={product.product_image} />
+                <p>{product.product_name}</p>
+                <p>{product.product_price}</p>
+                <button
+                  className="rounded-[20px] w-[200px] h-[50px] bg-[#ffc664]"
+                  onClick={() => updatePoint(product.product_price)}
+                >
+                  구매하기
+                </button>
+              </div>
+            </li>
           );
         })}
-      </div>
-      <div>내 포인트 : {points}</div>
-    </>
+      </ul>
+    </div>
   );
 };
 export default PointStorePage;
