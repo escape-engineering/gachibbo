@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+    .postEach{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around; 
+        border-bottom: 2px solid #1e0e77;
+        padding: 10px;
+    }
+
+    .postBox{
+        width: 70vw;
+        height: 80vh;
+        background-color: #dadada;
+        padding: 30px;
+        border-radius: 20px;
+    }
+
+    .mainBox{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .postDetailMainBox{
+        width: 98vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        margin-left: 192px;
+    }
+}
