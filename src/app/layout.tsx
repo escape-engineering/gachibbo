@@ -2,8 +2,6 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import Providers from '@/store/queryProvider';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import useAuthStore from '@/store/useAuthStore';
 import SideBar from './_components/SideBar';
 
 const geistSans = localFont({
@@ -37,7 +35,6 @@ export default function RootLayout({
             <SideBar />
             {children}
           </div>
-          <ReactQueryDevtools />
         </Providers>
       </body>
     </html>
