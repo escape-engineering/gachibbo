@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import browserClient from '@/utils/supabase/client';
 import Button from '@/app/_components/common/Button';
+import useAuthStore from '@/store/useAuthStore';
 
 const TestPage = () => {
   const [questions, setQuestions] = useState<TechQuestion[]>([]);
@@ -11,7 +12,7 @@ const TestPage = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false); // 제출 했을 때만 채점페이지로 이동 가능하게 하기 위해 상태관리
-  const userId = '2cc0b3c7-661a-4631-a6f8-6a204b89976c'; // TODO:  대체 필요
+  const { userId } = useAuthStore();
   const sessionCreated = useRef(false); // 세션이 한번에 한개만 생성되도록 관리
   const supabase = browserClient;
 

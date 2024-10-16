@@ -6,6 +6,7 @@ import browserClient from '@/utils/supabase/client';
 import Modal from '@/app/_components/common/Modal';
 import { formatDate } from '@/utils/date/formatDate';
 import Button from '@/app/_components/common/Button';
+import useAuthStore from '@/store/useAuthStore';
 
 const TechInterviewGranage = () => {
   const [responses, setResponses] = useState<MappedResponse[]>([]); // 사용자 답변과 기술질문을 엮은 객체의 배열
@@ -14,7 +15,7 @@ const TechInterviewGranage = () => {
   const [gradedResponses, setGradedResponses] = useState<{ [key: string]: boolean | null }>({}); // 각 문제별 채점 결과
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [sessionDate, setSessionDate] = useState<string | null>(null);
-  const userId = '2cc0b3c7-661a-4631-a6f8-6a204b89976c'; // TODO: 대체 필요
+  const { userId } = useAuthStore();
   const supabase = browserClient;
   const [sessionId, setSessionId] = useState<string | null>(null);
 
