@@ -5,7 +5,6 @@ import PaginationComponent from '@/app/_components/Pagination';
 import React, { useEffect, useState } from 'react';
 import { ResumeType } from '@/types/ResumeType';
 import Link from 'next/link';
-import '@/css/resumeList.css';
 import useAuthStore from '@/store/useAuthStore';
 
 const ResumePage = () => {
@@ -20,7 +19,7 @@ const ResumePage = () => {
 
   const { userType, userUid } = useAuthStore();
   const isMento = userType === 'mento' ? true : false;
-  //Tanstack Query를 사용하여 데이터 가져오기
+
   useEffect(() => {
     const getResumeList = async () => {
       const { data, error } = isMento
@@ -29,7 +28,6 @@ const ResumePage = () => {
       if (error) {
         console.error('Error loading ResumeData:', error.message);
       } else if (data) {
-        console.log('data', data);
         setResumeList(data);
       }
     };
@@ -38,23 +36,56 @@ const ResumePage = () => {
   }, [page, isMento]);
 
   return (
-    <div className="mainBox">
-      <h1>테스트</h1>
-      <div className="postBox">
-        {resumeList.slice(items * (page - 1), items * (page - 1) + items).map((resume) => {
-          return (
-            <Link className="postEach" key={resume.post_id} href={`resume/${resume.post_id}`}>
-              <p>{resume.portfolio_url}</p>
-              <p>{resume.experience}</p>
-              <p>{resume.region}</p>
-              <p>{resume.post_title}</p>
-              <p>{resume.isadopted === true ? '답변완료' : '답변중'}</p>
-              <p>{resume.use_point}</p>
-            </Link>
-          );
-        })}
+    <div className="max-w-full my-[70px] mx-auto p-6 shadow-md">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">이력서 목록</h1>
+        <Link href="/resumeadd">
+          <button className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">이력서 추가</button>
+        </Link>
       </div>
-      <PaginationComponent total={total} page={page} limit={limit} setPage={setPage} />
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200 border-b-2 border-gray-300">
+              <th className="py-4 px-6 text-center text-lg">성별</th>
+              <th className="py-4 px-6 text-center text-lg">제목</th>
+              <th className="py-4 px-6 text-center text-lg">희망지역</th>
+              <th className="py-4 px-6 text-center text-lg">전화번호</th>
+              <th className="py-4 px-6 text-center text-lg">이메일</th>
+              <th className="py-4 px-6 text-center text-lg">상태</th>
+              <th className="py-4 px-6 text-center text-lg">포인트</th>
+            </tr>
+          </thead>
+          <tbody>
+            {resumeList.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="py-4 px-6 text-center text-gray-500">
+                  등록된 이력서가 없습니다.
+                </td>
+              </tr>
+            ) : (
+              resumeList.slice(items * (page - 1), items * (page - 1) + items).map((resume) => (
+                <tr key={resume.post_id} className="border-b-2 border-gray-200 hover:bg-gray-50">
+                  <td className="py-4 px-6 text-center">{resume.gender}</td>
+                  <td className="py-4 px-6 text-center">{resume.post_title}</td>
+                  <td className="py-4 px-6 text-center">{resume.region}</td>
+                  <td className="py-4 px-6 text-center">{resume.phoneNum}</td>
+                  <td className="py-4 px-6 text-center">{resume.email}</td>
+                  <td className="py-4 px-6 text-center">{resume.isadopted ? '답변 완료' : '답변 중'}</td>
+                  <td className="py-4 px-6 text-center">{resume.use_point}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {resumeList.length > 0 && (
+        <div className="mt-6">
+          <PaginationComponent total={total} page={page} limit={limit} setPage={setPage} />
+        </div>
+      )}
     </div>
   );
 };
