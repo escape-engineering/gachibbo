@@ -1,4 +1,4 @@
-import { EducationType, ExperienceType, LicenseType } from '@/types/ResumeType';
+import { EducationType, ExperienceType, LicenseType } from '@/type/resumeTypes';
 
 const EMPTY_EDU_OBJ: Omit<EducationType, 'edu_id'> = {
   graduated_at: '',
