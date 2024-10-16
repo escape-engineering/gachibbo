@@ -6,13 +6,13 @@ import { CommentType } from '@/types/ResumeType';
 import browserClient from '@/utils/supabase/client';
 import useAuthStore from '@/store/useAuthStore';
 
-const recommend = ({ params }: { params: string }) => {
+const recommend = ({ params, writerId }: { params: string; writerId: string }) => {
   const supabase = createClient();
   const [comment, setComment] = useState<CommentType[]>([]);
   const [contents, setContents] = useState('');
 
   const [userId, setUserId] = useState('');
-  const { userName } = useAuthStore();
+  const { userName, userImg } = useAuthStore();
 
   //채택 관련 useState
   const [isAdopted, setIsAdopted] = useState(false);
@@ -53,7 +53,8 @@ const recommend = ({ params }: { params: string }) => {
       post_id: params,
       user_uuid: userId,
       feedback_desc: contents,
-      user_name: userName
+      user_name: userName,
+      image_url: userImg
     };
 
     if (contents.length === 0) {
@@ -160,6 +161,7 @@ const recommend = ({ params }: { params: string }) => {
     }
     console.log('updatefeedbackisadoptedData : ', feedbackData); // 함수 정상 작동
     setIsFeedbackAdopted(!isFeedbackAdopted);
+    getComment();
   };
   //is
   useEffect(() => {
@@ -175,16 +177,15 @@ const recommend = ({ params }: { params: string }) => {
         {comment.map((comment) => {
           return (
             <div key={comment.feedback_id} className="commentEach">
+              <img src={`${comment.image_url}`}/>
               <p>{comment.feedback_desc}</p>
               <p>{comment.user_name}</p>
-              <p>{comment.feedback_isSelected === true ? '채택완료' : ''}ㅁ</p>
-              <div className="border-2">
-                ResumePage{points}
-                {isAdopted}aa
-                <br />
-                {usePoints}ㅁㅁㅁ
-                <button onClick={() => handleAdoption(comment.feedback_id)}>채택</button>
-              </div>
+              <p>{comment.feedback_isSelected === true ? '채택완료' : ''}</p>
+              {writerId === userId && (
+                <div className="border-2">
+                  <button onClick={() => handleAdoption(comment.feedback_id)}>채택</button>
+                </div>
+              )}
             </div>
           );
         })}
