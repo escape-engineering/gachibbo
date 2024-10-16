@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { CommentType } from '@/types/ResumeType';
 import browserClient from '@/utils/supabase/client';
+import useAuthStore from '@/store/useAuthStore';
 
 const recommend = ({ params }: { params: string }) => {
   const supabase = createClient();
@@ -11,7 +12,7 @@ const recommend = ({ params }: { params: string }) => {
   const [contents, setContents] = useState('');
 
   const [userId, setUserId] = useState('');
-  // console.log('recommend', params);
+  const { userName } = useAuthStore();
 
   useEffect(() => {
     const getUserId = async () => {
@@ -24,21 +25,20 @@ const recommend = ({ params }: { params: string }) => {
     };
     getUserId();
 
-    const getComment = async () => {
-      const { data: isCommentData, error: isCommentError } = await supabase
-        .from('post_feedback')
-        .select('*')
-        .eq('post_id', params);
-      if (isCommentError) {
-        console.error('Error loading commentData : ', isCommentError.message);
-      } else if (isCommentData) {
-        console.log('CommentData', isCommentData);
-        setComment(isCommentData);
-      }
-    };
-
     getComment();
+    console.log('CommentDatasdddddddddds', comment);
   }, []);
+
+  const getComment = async () => {
+    const { data, error } = await supabase.from('post_feedback').select('*').eq('post_id', params);
+
+    if (error) {
+      console.error('Error loading commentData : ', error.message);
+    } else if (data) {
+      console.log('CommentData', data);
+      setComment(data);
+    }
+  };
 
   const updateComment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,14 +46,18 @@ const recommend = ({ params }: { params: string }) => {
     const commentData = {
       post_id: params,
       user_uuid: userId,
-      feedback_desc: contents
+      feedback_desc: contents,
+      user_name: userName
     };
 
     if (contents.length === 0) {
       alert('피드백이 없네요....?🤔');
     } else {
-      const { data, error } = await supabase.from('post_feedback').update([commentData]).eq('post_id', params);
-      console.log(contents);
+      const { data, error } = await supabase.from('post_feedback').insert([commentData]);
+      getComment();
+      setContents('');
+
+      console.log('contents', contents);
       if (error) {
         console.error('Error update comment : ', error.message);
       }
@@ -62,8 +66,20 @@ const recommend = ({ params }: { params: string }) => {
 
   return (
     <>
+      <div>
+        {comment.map((comment) => {
+          return (
+            <div key={comment.feedback_id}>
+              <p>{comment.feedback_desc}</p>
+              <p>{comment.user_name}</p>
+              <p>{comment.feedback_isSelected}</p>
+            </div>
+          );
+        })}
+      </div>
       <form onSubmit={updateComment}>
         <textarea
+          className="textareaCss"
           name="tuterComment"
           placeholder="내용입력"
           value={contents}
@@ -71,7 +87,7 @@ const recommend = ({ params }: { params: string }) => {
             setContents(e.target.value);
           }}
         ></textarea>
-        <button>제출</button>
+        <button type="submit">제출</button>
       </form>
     </>
   );

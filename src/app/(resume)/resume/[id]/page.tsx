@@ -140,7 +140,7 @@ const resumeDetail = ({ params }: Props) => {
     <>
       <div className="postDetailMainBox">
         {/* pdf 크기가 1280 * 720이 넘는 경우, overflow 처리 */}
-        <div style={{ width: '1280px', height: '720px', overflow: 'auto' }}>
+        <div style={{ width: '90vw', height: '720px', overflow: 'auto' }}>
           <Document file={`${resumeList[0]?.resume_url}`} onLoadSuccess={onDocumentLoadSuccess}>
             <Page width={1180} height={720} scale={pageScale} pageNumber={pageNumber} />
           </Document>
