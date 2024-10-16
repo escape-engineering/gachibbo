@@ -2,7 +2,7 @@
 'use client';
 import { createClient } from '../../utils/supabase/client';
 import { useEffect, useState } from 'react';
-import { Product, ProductDataList, SupabaseError } from '@/type/PointTypes';
+import { Product } from '@/type/PointTypes';
 
 const PointStorePage = () => {
   const supabase = createClient();
@@ -19,6 +19,9 @@ const PointStorePage = () => {
       const {
         data: { user }
       } = await supabase.auth.getUser();
+      if (!user) {
+        return '';
+      }
       console.log('유저data', user?.user_metadata);
       const userId = user?.user_metadata.sub;
 
