@@ -1,10 +1,9 @@
 import useAuthStore from '@/store/useAuthStore';
+import browserClient from '@/utils/supabase/client';
 import React from 'react';
-// import { useCookies } from 'next-client-cookies';
 
 const LogoutButton = () => {
   const { logout } = useAuthStore();
-  // const cookies = useCookies();
   const deleteAllCookies = () => {
     const cookies = document.cookie.split(';');
     cookies.forEach((cookie) => {
@@ -14,9 +13,10 @@ const LogoutButton = () => {
     });
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     logout(); // 로그아웃
     deleteAllCookies();
+    await browserClient.auth.signOut();
   };
   return <button onClick={handleLogout}>로그아웃</button>;
 };

@@ -13,6 +13,8 @@ type AuthState = {
 
   userId: string | null;
   setUserId: (userId: string) => void;
+  userUid: string | null;
+  setUserUid: (userUid: string) => void;
   userName: string | null;
   setUserName: (userName: string) => void;
   userEmail: string | null;
@@ -41,6 +43,8 @@ export const useAuthStore = create(
 
       userId: null,
       setUserId: (userId: string) => set({ userId: userId }),
+      userUid: null,
+      setUserUid: (userUid: string) => set({ userUid: userUid }),
       userName: null,
       setUserName: (userName: string) => set({ userName: userName }),
       userImg: null,

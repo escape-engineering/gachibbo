@@ -52,28 +52,28 @@ export const updateSession = async (request: NextRequest) => {
 
 export function middleware(request: NextRequest) {
   const allCookies = request.cookies.getAll();
-  console.log(allCookies);
-  const currentUser = request.cookies.get(allCookies[0].name)?.value;
-  console.log(currentUser);
-  // 리다이렉트 조건
-  // 로그인 안된 상태면 login으로 리다이렉트
-  if (!currentUser) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-  // 로그인된 사용자가 /login, /signup/mentee, /signup/mento에 접근하는 경우 홈으로 리다이렉트
-  const redirectPaths = ['/login', '/signup/mentee', '/signup/mento'];
-  if (currentUser && redirectPaths.includes(request.nextUrl.pathname)) {
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-  // 로그인인된 사용자만 마이페이지로 시작하는 url에 접근하도록 허용
-  if (currentUser && !request.nextUrl.pathname.startsWith('/mypage')) {
-    return NextResponse.redirect(new URL('/mypage', request.url)); // 마이페이지로 접근 허용
+  //request.nextUrl.pathname을 기반으로 로그인이 필요한 페이지와 아닌 페이지에 대한 처리가 필요하다.
+  // -> /login으로 요청이 들어온 경우는 cookies가 없을 수 밖에 없기 때문에 if문으로 분기 처리를 해야한다.
+
+  if (allCookies.length === 0) {
+    // 로그인인된 사용자만 마이페이지로 시작하는 url에 접근하도록 허용
+    if (request.nextUrl.pathname.startsWith('/mypage')) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  } else {
+    const currentUser = request.cookies.get(allCookies[0].name)?.value;
+
+    // 로그인된 사용자가 /login, /signup/mentee, /signup/mento에 접근하는 경우 홈으로 리다이렉트
+    const redirectPaths = ['/login', '/signup/mentee', '/signup/mento'];
+    if (currentUser && redirectPaths.includes(request.nextUrl.pathname)) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
   }
   return NextResponse.next();
 }
 export const config = {
   // 이 Middleware가 동작할 경로들을 추가해주면된다.
-  matcher: ['/login', '/signup/mentee', '/signup/mento', '/mypage/:path*']
+  matcher: ['/login', '/signup/mentee', '/signup/mento', '/mypage']
 };
 
 //==================페이지 리다이렉트 2

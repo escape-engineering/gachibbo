@@ -49,16 +49,14 @@ const recommend = ({ params }: { params: string }) => {
       feedback_desc: contents
     };
 
-    if (e.target === null) {
+    if (contents.length === 0) {
       alert('피드백이 없네요....?🤔');
     } else {
-      const { data, error } = await supabase
-        .from('post_feedback')
-        .update([commentData])
-        .eq('post_id', params);
+      const { data, error } = await supabase.from('post_feedback').update([commentData]).eq('post_id', params);
+      console.log(contents);
       if (error) {
         console.error('Error update comment : ', error.message);
-      } 
+      }
     }
   };
 
