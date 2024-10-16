@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import browserClient from '@/utils/supabase/client';
 import Button from '@/app/_components/common/Button';
+import useAuthStore from '@/store/useAuthStore';
 
 const TestPage = () => {
   const [questions, setQuestions] = useState<TechQuestion[]>([]);
@@ -11,7 +12,7 @@ const TestPage = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false); // 제출 했을 때만 채점페이지로 이동 가능하게 하기 위해 상태관리
-  const userId = '2cc0b3c7-661a-4631-a6f8-6a204b89976c'; // TODO:  대체 필요
+  const { userUid } = useAuthStore();
   const sessionCreated = useRef(false); // 세션이 한번에 한개만 생성되도록 관리
   const supabase = browserClient;
 
@@ -24,7 +25,7 @@ const TestPage = () => {
       // 한 사이클을 tech_sessions (세션)테이블에 저장하기 위해 생성
       const { data: sessionData, error: sessionError } = await supabase
         .from('tech_sessions')
-        .insert({ user_uuid: userId })
+        .insert({ user_uuid: userUid })
         .select()
         .single();
 
@@ -56,7 +57,7 @@ const TestPage = () => {
     };
 
     initializeTest();
-  }, []);
+  }, [userUid]);
 
   // 사용자 답변 상태 관리
   const handleAnswerChange = (questionId: string, answer: string) => {
@@ -69,6 +70,11 @@ const TestPage = () => {
   // 사용자 답변 제출
   const handleSubmit = async () => {
     if (!sessionId) return;
+
+    if (isSubmitted) {
+      alert('이미 제출하였습니다.');
+      return;
+    }
 
     // 답변이 없는 문항이 있는지 확인
     const unAnsweredQuestions = questions.filter(
@@ -114,6 +120,7 @@ const TestPage = () => {
           <textarea
             className="w-full mt-2 p-2 border rounded h-32"
             placeholder={`답변을 입력하세요.\n\n\n(만약 모르는 문제가 있다면 '모르겠습니다' 라고 입력해주세요)`}
+            readOnly={isSubmitted}
             onChange={(e) => handleAnswerChange(q.tech_question_id, e.target.value)}
           />
         </div>

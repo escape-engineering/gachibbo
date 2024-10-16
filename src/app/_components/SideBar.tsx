@@ -1,40 +1,57 @@
 'use client';
 
-import useAuthStore from '@/store/useAuthStore';
-import { cookies } from 'next/headers';
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
+import { FiBookOpen, FiHome, FiLogOut, FiFileText } from 'react-icons/fi';
+import useAuthStore from '@/store/useAuthStore';
 import LogoutButton from './LogoutButton';
 
 const SideBar = () => {
-  const { isLoggedIn, loading } = useAuthStore();
-  const { userImg, userName } = useAuthStore();
+  const { userImg, userName, isLoggedIn } = useAuthStore();
 
   return (
-    <aside className="fixed top-0 left-0 flex flex-col justify-between w-[92px] h-[100vh] bg-[#064F32] py-[100px] px-[20px]">
-      <div className="flex flex-col justify-center items-center gap-[20px]">
-        <Link className="writingMode-vertical-lr text-white" href={'/'}>
-          홈
-        </Link>
-        <Link className="writingMode-vertical-lr text-white" href={'/tech_interview'}>
-          기술면접
-        </Link>
-        <Link className="writingMode-vertical-lr text-white" href={'/resume'}>
-          이력서
-        </Link>
+    <div className="flex min-h-screen">
+      <div className="w-[80px] bg-green-900 flex flex-col justify-between items-center h-full py-10">
+        <nav className="flex flex-col items-center gap-6">
+          <Link href="/" className="text-white flex flex-col items-center mb-2 hover:text-green-300">
+            <FiHome size={24} />
+            <span className="text-sm mt-1">홈</span>
+          </Link>
+
+          <Link href="/tech_interview" className="text-white flex flex-col items-center mb-2 hover:text-green-300">
+            <FiBookOpen size={24} />
+            <span className="text-sm mt-1">기술면접</span>
+          </Link>
+
+          <Link href="/resume" className="text-white flex flex-col items-center mb-2 hover:text-green-300">
+            <FiFileText size={24} />
+            <span className="text-sm mt-1">이력서</span>
+          </Link>
+        </nav>
+
+        <div className="flex flex-col items-center gap-6">
+          {isLoggedIn ? (
+            <div className="flex flex-col items-center">
+              <div className="text-white flex flex-col items-center hover:text-green-300 cursor-pointer">
+                <LogoutButton />
+              </div>
+              <hr className="border-t-[2px] border-white w-full mt-4" />
+              <img
+                className="border border-black border-solid w-[40px] h-[40px] mt-4 rounded-full"
+                src={`${userImg}`}
+                alt={`${userName}`}
+              />
+              <span className="text-white text-sm mt-1">{userName}</span>
+            </div>
+          ) : (
+            <Link href="/login" className="text-white flex flex-col items-center hover:text-green-300">
+              <FiLogOut size={24} />
+              <span className="text-sm mt-1">로그인</span>
+            </Link>
+          )}
+        </div>
       </div>
-      <div>
-        {loading && <span>로그인 처리 중</span>}
-        {isLoggedIn ? <LogoutButton /> : <Link href={'/login'}>로그인</Link>}
-      </div>
-      <div>
-        <img
-          className="border border-black border-solid w-[40px] h-[40px]"
-          src={userImg !== null ? `${userImg}?rev=${Date.now()} ` : ``}
-          alt={`${userName}의 프로필 이미지`}
-        />
-      </div>
-    </aside>
+    </div>
   );
 };
 
