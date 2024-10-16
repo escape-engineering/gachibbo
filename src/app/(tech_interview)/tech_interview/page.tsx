@@ -70,6 +70,11 @@ const TestPage = () => {
   const handleSubmit = async () => {
     if (!sessionId) return;
 
+    if (isSubmitted) {
+      alert('이미 제출하였습니다.');
+      return;
+    }
+
     // 답변이 없는 문항이 있는지 확인
     const unAnsweredQuestions = questions.filter(
       (question) => !answers[question.tech_question_id] || answers[question.tech_question_id].trim() === ''
@@ -114,6 +119,7 @@ const TestPage = () => {
           <textarea
             className="w-full mt-2 p-2 border rounded h-32"
             placeholder={`답변을 입력하세요.\n\n\n(만약 모르는 문제가 있다면 '모르겠습니다' 라고 입력해주세요)`}
+            readOnly={isSubmitted}
             onChange={(e) => handleAnswerChange(q.tech_question_id, e.target.value)}
           />
         </div>
