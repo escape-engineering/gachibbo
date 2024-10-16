@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/client';
 import React, { useEffect, useState } from 'react';
 import { ResumeType } from '@/types/ResumeType';
 import { Document, Page, pdfjs } from 'react-pdf';
+import Recommend from '@/app/_components/recommend';
 import 'core-js/full/promise/with-resolvers.js';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -137,7 +138,7 @@ const resumeDetail = ({ params }: Props) => {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
-      <div className='postDetailMainBox'>
+      <div className="postDetailMainBox">
         {/* pdf 크기가 1280 * 720이 넘는 경우, overflow 처리 */}
         <div style={{ width: '1280px', height: '720px', overflow: 'auto' }}>
           <Document file={`${resumeList[0]?.resume_url}`} onLoadSuccess={onDocumentLoadSuccess}>
@@ -187,10 +188,12 @@ const resumeDetail = ({ params }: Props) => {
           </button>
         </div>
         <hr />
-        
+
         <div className="border-2">
+          <Recommend params={params.id} />
           ResumePage{points}
-          {isAdopted}<br/>
+          {isAdopted}
+          <br />
           {usePoints}
           <button onClick={() => handleAdoption()}> 채택 완료</button>
         </div>

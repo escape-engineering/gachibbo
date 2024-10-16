@@ -34,4 +34,11 @@ export interface ResumeType {
   phoneNum: string;
   email: string;
   address: string;
-};
+}
+
+export interface CommentType {
+  feedback_id: string;
+  post_id: string;
+  user_uuid: string;
+  feedback_desc: string;
+}
