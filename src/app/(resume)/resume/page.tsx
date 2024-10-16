@@ -48,13 +48,12 @@ const ResumePage = () => {
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-200 border-b-2 border-gray-300">
-              <th className="py-4 px-6 text-center text-lg">성별</th>
               <th className="py-4 px-6 text-center text-lg">제목</th>
               <th className="py-4 px-6 text-center text-lg">희망지역</th>
-              <th className="py-4 px-6 text-center text-lg">전화번호</th>
               <th className="py-4 px-6 text-center text-lg">이메일</th>
               <th className="py-4 px-6 text-center text-lg">상태</th>
               <th className="py-4 px-6 text-center text-lg">포인트</th>
+              <th className="py-4 px-6 text-center text-lg">상세보기</th>
             </tr>
           </thead>
           <tbody>
@@ -67,13 +66,16 @@ const ResumePage = () => {
             ) : (
               resumeList.slice(items * (page - 1), items * (page - 1) + items).map((resume) => (
                 <tr key={resume.post_id} className="border-b-2 border-gray-200 hover:bg-gray-50">
-                  <td className="py-4 px-6 text-center">{resume.gender}</td>
                   <td className="py-4 px-6 text-center">{resume.post_title}</td>
                   <td className="py-4 px-6 text-center">{resume.region}</td>
-                  <td className="py-4 px-6 text-center">{resume.phoneNum}</td>
                   <td className="py-4 px-6 text-center">{resume.email}</td>
                   <td className="py-4 px-6 text-center">{resume.isadopted ? '답변 완료' : '답변 중'}</td>
                   <td className="py-4 px-6 text-center">{resume.use_point}</td>
+                  <td className="py-4 px-6 text-center">
+                    <Link className="bg-slate-300 p-2 rounded-md" href={`resume/${resume.post_id}`}>
+                      상세보기
+                    </Link>
+                  </td>
                 </tr>
               ))
             )}
