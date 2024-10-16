@@ -1,5 +1,7 @@
 'use client';
 
+import MyFeedbackPage from '@/app/_components/MyFeedbackPage';
+import MyTechInterview from '@/app/_components/MyTechInterviw';
 // pages/mypage.tsx
 import useAuthStore from '@/store/useAuthStore';
 import { getPoint } from '@/utils/getpoint';
@@ -8,8 +10,9 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const Mypage = () => {
-  const { userUid, userId, userName, userType, userImg, mentoCurrent, mentoWorkExperience } = useAuthStore();
+  const { userUid, userName, userType, userImg, mentoCurrent, mentoWorkExperience } = useAuthStore();
   const [points, setPoints] = useState<number | null>(0);
+  const [visibleFeedback, setVisibleFeedback] = useState(8);
 
   useEffect(() => {
     const fetchPoint = async () => {
@@ -69,15 +72,11 @@ const Mypage = () => {
 
       {userType === 'mento' ? (
         <article>
-          <div>
-            <h2 className="text-xl  mb-4">최근 나의 피드백</h2>
-          </div>
+          <MyFeedbackPage />
         </article>
       ) : (
         <article>
-          <div>
-            <h2 className="text-xl  mb-4">최근 나의 면접</h2>
-          </div>
+          <MyTechInterview />
         </article>
       )}
     </section>
