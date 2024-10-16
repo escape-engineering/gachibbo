@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { ResumeType } from '@/types/ResumeType';
 import Link from 'next/link';
 import '@/css/resumeList.css';
+import useAuthStore from '@/store/useAuthStore';
 
 const ResumePage = () => {
   const supabase = createClient();
@@ -17,11 +18,14 @@ const ResumePage = () => {
   const limit = 10;
   const offset = (page - 1) * limit;
 
+  const { userType, userUid } = useAuthStore();
+  const isMento = userType === 'mento' ? true : false;
   //Tanstack Query를 사용하여 데이터 가져오기
   useEffect(() => {
     const getResumeList = async () => {
-      const { data, error } = await supabase.from('post_detail').select();
-
+      const { data, error } = isMento
+        ? await supabase.from('post_detail').select()
+        : await supabase.from('post_detail').select().eq('user_uuid', userUid);
       if (error) {
         console.error('Error loading ResumeData:', error.message);
       } else if (data) {
@@ -31,7 +35,7 @@ const ResumePage = () => {
     };
 
     getResumeList();
-  }, [page]);
+  }, [page, isMento]);
 
   return (
     <div className="mainBox">
