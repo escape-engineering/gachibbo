@@ -35,7 +35,7 @@ const resumeDetail = ({ params }: Props) => {
   const [isAdopted, setIsAdopted] = useState(false);
   const [points, setPoints] = useState(0);
   const [usePoints, setUsePoints] = useState(0);
-  const [userType, setUserType] = useState('');
+  // const [userType, setUserType] = useState('');
   const [userId, setUserId] = useState('');
 
   useEffect(() => {
@@ -99,17 +99,17 @@ const resumeDetail = ({ params }: Props) => {
         console.log('usePoint test', usePointData[0]?.use_point);
         setUsePoints(usePointData[0]?.use_point);
       }
-      //멘토/멘티 상태값 가져오기
-      const { data: userTypeData, error: userTypeError } = await supabase
-        .from('auth')
-        .select('user_type')
-        .eq('id', userId);
-      if (userTypeError) {
-        console.error('Error fetching data usertype : ', userTypeError.message);
-      } else if (userTypeData) {
-        console.log('usertype test', userTypeData[1]?.user_type);
-        setUserType(userTypeData[1]?.user_type);
-      }
+      // //멘토/멘티 상태값 가져오기
+      // const { data: userTypeData, error: userTypeError } = await supabase
+      //   .from('auth')
+      //   .select('user_type')
+      //   .eq('id', userId);
+      // if (userTypeError) {
+      //   console.error('Error fetching data usertype : ', userTypeError.message);
+      // } else if (userTypeData) {
+      //   console.log('usertype test', userTypeData[1]?.user_type);
+
+      // }
     };
 
     getPointAndIsAdopted();
