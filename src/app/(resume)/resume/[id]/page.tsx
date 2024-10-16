@@ -9,6 +9,8 @@ import 'core-js/full/promise/with-resolvers.js';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import '@/css/resumeList.css';
+import useAuthStore from '@/store/useAuthStore';
+import MoveToResumeUpdate from '@/app/_components/resumeDetail/MoveToResumeUpdate';
 
 // workerSrc 정의 하지 않으면 pdf 보여지지 않습니다.
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.mjs`;
@@ -25,6 +27,10 @@ const resumeDetail = ({ params }: Props) => {
   const [numPages, setNumPages] = useState(0); // 총 페이지수
   const [pageNumber, setPageNumber] = useState(1); // 현재 페이지
   const [pageScale, setPageScale] = useState(1); // 페이지 스케일
+
+  //멘토인지 확인하기 위한 userType, mento인지 비교하여 boolean으로 isMento지정
+  const { userType } = useAuthStore();
+  const isMento = userType === 'mento' ? true : false;
 
   useEffect(() => {
     const getResumeList = async () => {
@@ -46,9 +52,11 @@ const resumeDetail = ({ params }: Props) => {
     console.log(`numPages ${numPages}`);
     setNumPages(numPages);
   }
-  
+
   return (
     <>
+      {/* 멘티라면 수정버튼 보이도록 */}
+      {isMento ? <></> : <MoveToResumeUpdate postId={params.id} />}
       <div className="postDetailMainBox">
         {/* pdf 크기가 1280 * 720이 넘는 경우, overflow 처리 */}
         <div style={{ width: '80vw', height: '720px', overflow: 'auto' }}>
