@@ -35,7 +35,7 @@ const Mypage = () => {
         </Link>
       </div>
 
-      <div className="flex flex-row justify-between items-center bg-white p-6">
+      <article className="flex flex-row justify-between items-center bg-white p-6 mb-5">
         {/* 좌측 - 유저 정보(멘토멘티 여부, 이름, ) */}
         <div className="flex flex-row items-center gap-5">
           <div>
@@ -65,7 +65,7 @@ const Mypage = () => {
           <h5 className="text-[#35C52D] font-bold text-6xl">{points !== null ? points : '0'}</h5>
           <span className="text-[#777]  mb-2">point</span>
         </div>
-      </div>
+      </article>
 
       {userType === 'mento' ? (
         <article>
