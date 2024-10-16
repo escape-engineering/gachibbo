@@ -3,6 +3,7 @@
 import { createClient } from '../../utils/supabase/client';
 import { useEffect, useState } from 'react';
 import { Product } from '@/type/PointTypes';
+import { useRouter } from 'next/navigation';
 
 const PointStorePage = () => {
   const supabase = createClient();
@@ -12,6 +13,7 @@ const PointStorePage = () => {
     { created_at: '', id: 0, point_product_id: '', product_image: '', product_name: '', product_price: 0 }
   ]);
   const [userType, setUserType] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     //유저 data 가져오기
@@ -25,29 +27,32 @@ const PointStorePage = () => {
       console.log('유저data', user?.user_metadata);
       const userId = user?.user_metadata.sub;
 
-      //유저 타입(멘티,멘토) 데이터 가져오기
+      //유저 타입(멘티,멘토) 데이터 가져오기, userType 봐서 mento만 들어오게 하는 로직
       const { data: userTypeData, error: userTypeError } = await supabase
         .from('auth')
         .select('user_type')
-        .eq('user_id', userId);
+        .eq('id', userId);
+      console.log('유저타입data', userTypeData);
       if (userTypeError) {
         console.error('Error fetching data getPoint : ', userTypeError.message);
-      } else if (userTypeData) {
-        console.log('유저타입 test', userTypeData[1]?.user_type);
-        setUserType(userTypeData[1]?.user_type);
-        return userTypeData[1]?.user_type;
+      } else if (userTypeData && userTypeData[0]?.user_type === 'mento') {
+        console.log('유저타입 test', userTypeData[0]?.user_type);
+        setUserType(userTypeData[0]?.user_type);
+      } else {
+        router.push('/');
+        alert('멘토만 접근 가능한 페이지입니다');
       }
 
-      //userType 봐서 mento만 들어오게 하는 로직
-
+      console.log('첫 콘솔', userId);
       //point data 가져오기
+
       const { data, error } = await supabase.from('point').select('user_point').eq('user_id', userId);
+      console.log('포인트 데이터', data);
       if (error) {
         console.error('Error fetching data getPoint : ', error.message);
       } else if (data) {
         console.log('유저 포인트 데이터 test', data[0]?.user_point);
         setPoints(data[0]?.user_point);
-        return data[0]?.user_point;
       }
     };
     //상품 데이터 가져오기
@@ -63,8 +68,6 @@ const PointStorePage = () => {
       }
     };
 
-    //params로 가져오기, middleware 써서 api 중 로그인한 사용자의 id 값 가져오는 api 있음
-    //id값 하나 지정해서 가져오게 해서 사용하기
     getPoint();
     getProductList();
   }, []);

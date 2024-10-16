@@ -31,6 +31,12 @@ const resumeDetail = ({ params }: Props) => {
   //멘토인지 확인하기 위한 userType, mento인지 비교하여 boolean으로 isMento지정
   const { userType } = useAuthStore();
   const isMento = userType === 'mento' ? true : false;
+  //채택 관련 useState
+  const [isAdopted, setIsAdopted] = useState(false);
+  const [points, setPoints] = useState(0);
+  const [usePoints, setUsePoints] = useState(0);
+  // const [userType, setUserType] = useState('');
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const getResumeList = async () => {
@@ -47,21 +53,147 @@ const resumeDetail = ({ params }: Props) => {
     console.log('params', params);
     getResumeList();
   }, []);
+  //////////////////////////////////////////////////////////////// 채택함수 //////////////////////////////////////////////////////////
+  useEffect(() => {
+    const getPointAndIsAdopted = async () => {
+      //유저 data 가져오기
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      if (!user) {
+        return '';
+      }
+      console.log('유저data', user?.user_metadata);
+      setUserId(user?.user_metadata.sub);
 
+      //포인트 데이터 가져오기
+      const { data: pointData, error: pointError } = await supabase
+        .from('point')
+        .select('user_point')
+        .eq('user_id', userId);
+      if (pointError) {
+        console.error('Error fetching data getPoint : ', pointError.message);
+      } else if (pointData) {
+        console.log('유저 test', pointData[0]?.user_point);
+        setPoints(pointData[0]?.user_point);
+      }
+      //adopted 데이터 가져오기
+      const { data: isAdoptedData, error: isAdoptedError } = await supabase
+        .from('post_detail')
+        .select('isadopted')
+        .eq('post_id', params.id);
+      if (isAdoptedError) {
+        console.error('Error fetching data getPoint : ', isAdoptedError.message);
+      } else if (isAdoptedData) {
+        console.log('채택 test', isAdoptedData[0]?.isadopted);
+        setIsAdopted(isAdoptedData[0]?.isadopted);
+      }
+      //usePoint 값 가져오기
+      const { data: usePointData, error: usePointError } = await supabase
+        .from('post_detail')
+        .select('use_point')
+        .eq('post_id', userId);
+      if (usePointError) {
+        console.error('Error fetching data getPoint : ', usePointError.message);
+      } else if (usePointData) {
+        console.log('usePoint test', usePointData[0]?.use_point);
+        setUsePoints(usePointData[0]?.use_point);
+      }
+      // //멘토/멘티 상태값 가져오기
+      // const { data: userTypeData, error: userTypeError } = await supabase
+      //   .from('auth')
+      //   .select('user_type')
+      //   .eq('id', userId);
+      // if (userTypeError) {
+      //   console.error('Error fetching data usertype : ', userTypeError.message);
+      // } else if (userTypeData) {
+      //   console.log('usertype test', userTypeData[1]?.user_type);
+
+      // }
+    };
+
+    getPointAndIsAdopted();
+  }, []);
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     console.log(`numPages ${numPages}`);
     setNumPages(numPages);
   }
+  //////////////////////////////////////////////////////////////// 채택함수 //////////////////////////////////////////////////////////
+  //건 포인트 차감
+  const updateUserPointForMentee = async (adoptionPoint: number) => {
+    const { data, error } = await supabase
+      .from('point')
+      .update({ user_point: points - adoptionPoint })
+      .eq('user_id', userId)
+      .select('user_point');
+    if (error) {
+      console.error('Error updating data updateUserPointForMentee : ', error.message);
+    } else if (data) {
+      console.log('채택 포인트만큼 차감 완료 : ', data);
+    }
+    console.log('updateUserPointForMentee data : ', data); // 함수 정상 작동
+    console.log('Current points:', typeof points, points);
+    const buyProduct = (adoptionPoint: number) => {
+      setPoints(points - adoptionPoint);
+    };
+    buyProduct(adoptionPoint);
+  };
+  //채택 함수
+  const handleAdoption = async () => {
+    if (isAdopted === false) {
+      const { data, error } = await supabase
+        .from('post_detail')
+        .update({ isadopted: true })
+        .eq('post_id', 'ed6fb1c8-9ea9-492c-b7d7-3911d74cf56a')
+        .select('isadopted');
+      if (error) {
+        console.error('Error updating data isadoptedData : ', error.message);
+      } else if (data) {
+        console.log('채택 상태 변경 완료 : ', data);
+      }
+      console.log('updateisadoptedData : ', data); // 함수 정상 작동
+      setIsAdopted(!isAdopted);
+    } else {
+      alert('이미 채택된 게시글입니다');
+    }
+  };
+  //채택 함수가 작동하면 포인트 차감 함수가 돌아가게
+  useEffect(() => {
+    if (isAdopted) {
+      updateUserPointForMentee(usePoints);
+    }
+  }, [isAdopted]);
 
+  const updateUserPointForMento = async (adoptionPoint: number) => {
+    const { data, error } = await supabase
+      .from('point')
+      .update({ user_point: points - adoptionPoint })
+      .eq('user_id', 'fe479cde-9651-404a-b0ad-e36cbcc1795f')
+      .select('user_point');
+    if (error) {
+      console.error('Error updating data updateUserPointForMentee : ', error.message);
+    } else if (data) {
+      console.log('채택 포인트만큼 차감 완료 : ', data);
+    }
+    console.log('updateUserPointForMentee data : ', data); // 함수 정상 작동
+    console.log('Current points:', typeof points, points);
+    const buyProduct = (adoptionPoint: number) => {
+      setPoints(points - adoptionPoint);
+    };
+    buyProduct(adoptionPoint);
+  };
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
       {/* 멘티라면 수정버튼 보이도록 */}
       {isMento ? <></> : <MoveToResumeUpdate postId={params.id} />}
       <div className="postDetailMainBox">
         {/* pdf 크기가 1280 * 720이 넘는 경우, overflow 처리 */}
-        <div style={{ width: '80vw', height: '720px', overflow: 'auto' }}>
+        <div style={{ width: '70vw', height: '1080px', overflow: 'auto' }} className="pdfviewer">
           <Document file={`${resumeList[0]?.resume_url}`} onLoadSuccess={onDocumentLoadSuccess}>
-            <Page width={1180} height={720} scale={pageScale} pageNumber={pageNumber} />
+            <Page width={980} height={720} scale={pageScale} pageNumber={pageNumber} />
           </Document>
         </div>
         <div>
@@ -109,7 +241,7 @@ const resumeDetail = ({ params }: Props) => {
         <hr />
 
         <div className="border-2">
-          <Recommend params={params.id} />
+          <Recommend params={params.id} writerId={resumeList[0]?.user_uuid} />
         </div>
       </div>
     </>

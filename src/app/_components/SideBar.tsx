@@ -2,12 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FiBookOpen, FiHome, FiLogOut, FiFileText } from 'react-icons/fi';
+import { FiBookOpen, FiHome, FiLogOut, FiFileText, FiShoppingCart } from 'react-icons/fi';
 import useAuthStore from '@/store/useAuthStore';
 import LogoutButton from './LogoutButton';
 
 const SideBar = () => {
-  const { userImg, userName, isLoggedIn } = useAuthStore();
+  const { userImg, userName, isLoggedIn, userType } = useAuthStore();
+  const isMento = userType === 'mento' ? true : false;
 
   return (
     <div className="fixed flex h-[100vh]">
@@ -27,6 +28,14 @@ const SideBar = () => {
             <FiFileText size={24} />
             <span className="text-sm mt-1">이력서</span>
           </Link>
+          {isMento ? (
+            <Link href="/pointstore" className="text-white flex flex-col items-center mb-2 hover:text-green-300">
+              <FiShoppingCart size={24} />
+              <span className="text-sm mt-1">포인트 상점</span>
+            </Link>
+          ) : (
+            <></>
+          )}
         </nav>
 
         <div className="flex flex-col items-center gap-6">
