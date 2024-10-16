@@ -6,6 +6,7 @@ import browserClient from '@/utils/supabase/client';
 import Modal from '@/app/_components/common/Modal';
 import { formatDate } from '@/utils/date/formatDate';
 import Button from '@/app/_components/common/Button';
+import useAuthStore from '@/store/useAuthStore';
 
 const TechInterviewGranage = () => {
   const [responses, setResponses] = useState<MappedResponse[]>([]); // 사용자 답변과 기술질문을 엮은 객체의 배열
@@ -14,7 +15,7 @@ const TechInterviewGranage = () => {
   const [gradedResponses, setGradedResponses] = useState<{ [key: string]: boolean | null }>({}); // 각 문제별 채점 결과
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [sessionDate, setSessionDate] = useState<string | null>(null);
-  const userId = '2cc0b3c7-661a-4631-a6f8-6a204b89976c'; // TODO: 대체 필요
+  const { userUid } = useAuthStore();
   const supabase = browserClient;
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -24,7 +25,7 @@ const TechInterviewGranage = () => {
       const { data: lastSession, error: sessionError } = await supabase
         .from('tech_sessions')
         .select('tech_session_id, tech_session_create_at')
-        .eq('user_uuid', userId)
+        .eq('user_uuid', userUid)
         .order('tech_session_create_at', { ascending: false }) // tech_session_create_at가 timestamp이고 그걸 이용해 최신 순으로 정렬
         .limit(1)
         .single();
@@ -90,7 +91,7 @@ const TechInterviewGranage = () => {
     };
 
     fetchLastSession();
-  }, [userId]);
+  }, [userUid]);
 
   // O/X 버튼 클릭 시 점수 계산 및 채점 상태 업데이트
   const handleGrade = (questionId: string, isCorrect: boolean) => {
@@ -177,14 +178,17 @@ const TechInterviewGranage = () => {
       </div>
 
       <Modal isOpen={isModalOpen} handleIsOpen={() => setIsModalOpen(false)}>
-        <h2 className="text-xl font-bold">채점 결과</h2>
-        <p className="text-lg">
+        <h2 className="text-xl font-bold mb-4">채점 결과</h2>
+        <p className="text-lg mb-4">
           총 점수: {score} / {responses.length}
         </p>
-        <p className="text-lg">기술 면접 생성일: {sessionDate || '날짜 정보가 없습니다.'}</p>
-        <div className="mt-4 text-center">
-          <Link href="/" className="px-4 py-2 bg-green-500 text-white rounded-md">
-            메인으로 돌아가기
+        <p className="text-lg mb-4">기술 면접 생성일: {sessionDate || '날짜 정보가 없습니다.'}</p>
+        <div className="mt-4 text-center flex w-full justify-around">
+          <Link href="/tech_interview" className="px-4 mr-2 py-2 mt-4 bg-green-500 text-white rounded-md">
+            문제 다시 풀기
+          </Link>
+          <Link href="/mypage" className="px-4 py-2 ml-2 mt-4 bg-green-500 text-white rounded-md">
+            마이페이지
           </Link>
         </div>
       </Modal>

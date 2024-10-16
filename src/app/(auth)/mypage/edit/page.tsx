@@ -10,11 +10,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import useAuthStore from '@/store/useAuthStore';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 
 const MentoSignUpPage = () => {
   const router = useRouter();
-  const { userUid, userId, userName, userType, userImg, mentoCurrent, mentoWorkExperience } = useAuthStore();
+  const {
+    userUid,
+    userId,
+    userName,
+    userType,
+    userImg,
+    mentoCurrent,
+    mentoWorkExperience,
+    setUserImg,
+    setUserName,
+    setMentoWorkExperience,
+    setMentoCurrent
+  } = useAuthStore();
 
   //zod
   const signUpSchema = z.object({
@@ -43,26 +55,24 @@ const MentoSignUpPage = () => {
       return;
     }
 
-    // NOTE
-    // 사용자가 이미지를 선택했을 경우
-    // user_image / user_id 경로의 모든 이미지를 삭제한 후
-    // 선택한 이미지를 user_image / user_id 경로에 넣고
-    // 이 이미지를 프로필 이미지로 등록
+    const profile_image_name = userUid;
 
     const { data: imgData, error: imgError } = await browserClient.storage
       .from('user_image')
-      .upload(`${userId}/${file.name}`, file, {
+      .upload(`${userId}/${profile_image_name}`, file, {
         cacheControl: '3600',
-        upsert: false
+        upsert: true
       });
     if (imgError) {
       console.log('이미지 오류 => ', imgError);
     }
 
     // 업로드된 이미지의 URL 가져오기
-    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_image/${userId}/${file.name}`;
+    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_image/${userId}/${profile_image_name}`;
 
-    setValue('image_url', imageUrl);
+    //setValue('image_url', imageUrl);
+    setUserImg(imageUrl);
+    console.log(imageUrl);
   };
 
   // 폼 제출 함수
@@ -82,7 +92,15 @@ const MentoSignUpPage = () => {
     } else {
       console.log('회원정보 수정에 성공했습니다 =>', userData);
 
-      router.push('/');
+      setUserName(watch('user_name'));
+      //setUserImg(watch('image_url'));
+      setMentoCurrent(watch('mento_current'));
+      setMentoWorkExperience(watch('mento_work_experience'));
+
+      console.log(watch('image_url'));
+
+      router.push('/mypage');
+      // redirect('/mypage');
     }
   };
   return (
@@ -102,8 +120,11 @@ const MentoSignUpPage = () => {
               type="text"
               required
             />
-            {formState.errors.user_name && <span>{formState.errors.user_name.message}</span>}
+            {formState.errors.user_name && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_name.message}</span>
+            )}
           </div>
+
           {userType === 'mento' ? (
             <>
               <div className="flex flex-row items-center">

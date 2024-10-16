@@ -3,7 +3,6 @@
 // pages/mypage.tsx
 import useAuthStore from '@/store/useAuthStore';
 import { getPoint } from '@/utils/getpoint';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -25,6 +24,7 @@ const Mypage = () => {
     };
     fetchPoint();
   }, [userUid]);
+
   console.log(mentoCurrent);
   return (
     <section className="p-4 bg-[#efefef] w-full">
@@ -35,16 +35,16 @@ const Mypage = () => {
         </Link>
       </div>
 
-      <div className="flex flex-row justify-between items-center bg-white p-6">
+      <article className="flex flex-row justify-between items-center bg-white p-6 mb-5">
         {/* 좌측 - 유저 정보(멘토멘티 여부, 이름, ) */}
         <div className="flex flex-row items-center gap-5">
-          <img
-            src={`${userImg}`}
-            alt={`${userName}의 프로필 이미지`}
-            width={130}
-            height={130}
-            className="rounded-full"
-          />{' '}
+          <div>
+            <img
+              src={userImg !== null ? `${userImg}?rev=${Date.now()} ` : ``}
+              alt={`${userName}의 프로필 이미지`}
+              className="rounded-full w-32 h-32 object-cover"
+            />{' '}
+          </div>
           <div>
             {userType === 'mento' ? (
               <div className=" flex flex-row gap-2">
@@ -65,7 +65,7 @@ const Mypage = () => {
           <h5 className="text-[#35C52D] font-bold text-6xl">{points !== null ? points : '0'}</h5>
           <span className="text-[#777]  mb-2">point</span>
         </div>
-      </div>
+      </article>
 
       {userType === 'mento' ? (
         <article>

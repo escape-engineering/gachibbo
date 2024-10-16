@@ -1,6 +1,7 @@
 'use client';
 
 import { createClient } from '@/utils/supabase/client';
+import PaginationComponent from '@/app/_components/Pagination';
 import React, { useEffect, useState } from 'react';
 import { ResumeType } from '@/types/ResumeType';
 import Link from 'next/link';
@@ -9,6 +10,11 @@ import '@/css/resumeList.css';
 const ResumePage = () => {
   const supabase = createClient();
   const [resumeList, setResumeList] = useState<ResumeType[]>([]);
+  const [page, setPage] = useState(1);
+  
+  const total = 50;
+  const limit = 10;
+  const offset = (page - 1) * limit;
 
   //Tanstack Query를 사용하여 데이터 가져오기
   useEffect(() => {
@@ -24,7 +30,8 @@ const ResumePage = () => {
     };
 
     getResumeList();
-  }, []);
+  }, [page]);
+
   return (
     <div className="mainBox">
       <h1>테스트</h1>
@@ -42,6 +49,7 @@ const ResumePage = () => {
           );
         })}
       </div>
+      <PaginationComponent total={total} page={page} limit={limit} setPage={setPage} />
     </div>
   );
 };
