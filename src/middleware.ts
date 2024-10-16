@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
+import useAuthStore from './store/useAuthStore';
 
 export const updateSession = async (request: NextRequest) => {
   // This `try/catch` block is only here for the interactive tutorial.
@@ -57,21 +58,29 @@ export function middleware(request: NextRequest) {
 
   if (allCookies.length === 0) {
     // 로그인인된 사용자만 마이페이지로 시작하는 url에 접근하도록 허용
-    if (request.nextUrl.pathname.startsWith('/mypage')) {
+    const redirectPathsIsLogin = ['/mypage', '/tech_interview', '/resumeadd'];
+    if (redirectPathsIsLogin.includes(request.nextUrl.pathname)) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   } else {
     const currentUser = request.cookies.get(allCookies[0].name)?.value;
 
     // 로그인된 사용자가 /login, /signup/mentee, /signup/mento에 접근하는 경우 홈으로 리다이렉트
-    const redirectPaths = ['/login', '/signup/mentee', '/signup/mento', '/tech_interview', '/resumeadd'];
+    const redirectPaths = ['/login', '/signup/mentee', '/signup/mento'];
     if (currentUser && redirectPaths.includes(request.nextUrl.pathname)) {
       return NextResponse.redirect(new URL('/', request.url));
     }
 
-    // 만약 멘토인 사용자가 접근하는 경우
-
-    // 만약 멘티인 사용자가 접근하는 경우
+    // // 만약 멘토인 사용자가 접근하는 경우
+    // const mentoRedirectPath = ['/mypage/tech_interview', '/mypage/resume'];
+    // if (userType === 'mento' && mentoRedirectPath.includes(request.nextUrl.pathname)) {
+    //   return NextResponse.redirect(new URL('/login', request.url));
+    // }
+    // // 만약 멘티인 사용자가 접근하는 경우
+    // const menteeRedirectPath = ['/mypage/feedback'];
+    // if (userType === 'mento' && menteeRedirectPath.includes(request.nextUrl.pathname)) {
+    //   return NextResponse.redirect(new URL('/login', request.url));
+    // }
   }
   return NextResponse.next();
 }
