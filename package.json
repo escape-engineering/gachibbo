@@ -22,7 +22,10 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "core-js": "^3.38.1",
+<<<<<<< HEAD
     "json-server": "^1.0.0-beta.3",
+=======
+>>>>>>> c8b3ae9130953fb3589b068761c62cf972b5c99e
     "jspdf": "^2.5.2",
     "lucide-react": "^0.451.0",
     "next": "14.2.15",

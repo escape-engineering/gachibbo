@@ -2845,6 +2845,12 @@ negotiator@^0.6.3:
   integrity sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> af3f864 (임시 저장)
+>>>>>>> c8b3ae9130953fb3589b068761c62cf972b5c99e
 next-client-cookies@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/next-client-cookies/-/next-client-cookies-1.1.1.tgz#7e5e4d4c3a8dc0a5ffaf97e310d9ab84c21d4e52"
@@ -2852,8 +2858,16 @@ next-client-cookies@^1.1.1:
   dependencies:
     js-cookie "^3.0.5"
 
+<<<<<<< HEAD
 =======
 >>>>>>> 74ad6c393e256a0903ff790204bba5316a0c7eb0
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> 8378e814642ee48d5cb7fd57d63c4d19fb10ab92
+=======
+>>>>>>> af3f864 (임시 저장)
+>>>>>>> c8b3ae9130953fb3589b068761c62cf972b5c99e
 next@14.2.15:
   version "14.2.15"
   resolved "https://registry.npmjs.org/next/-/next-14.2.15.tgz"

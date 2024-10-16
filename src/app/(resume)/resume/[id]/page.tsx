@@ -29,6 +29,7 @@ const resumeDetail = ({ params }: Props) => {
   const [isAdopted, setIsAdopted] = useState(false);
   const [points, setPoints] = useState(0);
   const [usePoints, setUsePoints] = useState(0);
+  const [userType, setUserType] = useState('');
 
   useEffect(() => {
     const getResumeList = async () => {
@@ -63,7 +64,7 @@ const resumeDetail = ({ params }: Props) => {
       const { data: isAdoptedData, error: isAdoptedError } = await supabase
         .from('post_detail')
         .select('isadopted')
-        .eq('post_id', 'ed6fb1c8-9ea9-492c-b7d7-3911d74cf56a');
+        .eq('post_id', params.id);
       if (isAdoptedError) {
         console.error('Error fetching data getPoint : ', isAdoptedError.message);
       } else if (isAdoptedData) {
@@ -81,6 +82,23 @@ const resumeDetail = ({ params }: Props) => {
         console.log('usePoint test', usePointData[0]?.use_point);
         setUsePoints(usePointData[0]?.use_point);
       }
+      //멘토/멘티 상태값 가져오기
+      const { data: userTypeData, error: userTypeError } = await supabase
+        .from('auth')
+        .select('user_type')
+        .eq('id', '2cc0b3c7-661a-4631-a6f8-6a204b89976c');
+      if (userTypeError) {
+        console.error('Error fetching data usertype : ', userTypeError.message);
+      } else if (userTypeData) {
+        console.log('usertype test', userTypeData[1]?.user_type);
+        setUserType(userTypeData[1]?.user_type);
+      }
+    };
+
+    const getUserData = async () => {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
     };
 
     getPointAndIsAdopted();
@@ -92,18 +110,18 @@ const resumeDetail = ({ params }: Props) => {
   }
   //////////////////////////////////////////////////////////////// 채택함수 //////////////////////////////////////////////////////////
   //건 포인트 차감
-  const updateUserPointInResume = async (adoptionPoint: number) => {
+  const updateUserPointForMentee = async (adoptionPoint: number) => {
     const { data, error } = await supabase
       .from('point')
       .update({ user_point: points - adoptionPoint })
       .eq('user_id', '2cc0b3c7-661a-4631-a6f8-6a204b89976c')
       .select('user_point');
     if (error) {
-      console.error('Error updating data updateUserPointInResume : ', error.message);
+      console.error('Error updating data updateUserPointForMentee : ', error.message);
     } else if (data) {
       console.log('채택 포인트만큼 차감 완료 : ', data);
     }
-    console.log('updateUserPointInResume data : ', data); // 함수 정상 작동
+    console.log('updateUserPointForMentee data : ', data); // 함수 정상 작동
     console.log('Current points:', typeof points, points);
     const buyProduct = (adoptionPoint: number) => {
       setPoints(points - adoptionPoint);
@@ -126,15 +144,35 @@ const resumeDetail = ({ params }: Props) => {
       console.log('updateisadoptedData : ', data); // 함수 정상 작동
       setIsAdopted(!isAdopted);
     } else {
-      alert('동작 그만 밑장빼기냐?');
+      alert('이미 채택된 게시글입니다');
     }
   };
-  //is
+  //채택 함수가 작동하면 포인트 차감 함수가 돌아가게
   useEffect(() => {
     if (isAdopted) {
-      updateUserPointInResume(usePoints);
+      updateUserPointForMentee(usePoints);
     }
   }, [isAdopted]);
+
+  const updateUserPointForMento = async (adoptionPoint: number) => {
+    const { data, error } = await supabase
+      .from('point')
+      .update({ user_point: points - adoptionPoint })
+      .eq('user_id', 'fe479cde-9651-404a-b0ad-e36cbcc1795f')
+      .select('user_point');
+    if (error) {
+      console.error('Error updating data updateUserPointForMentee : ', error.message);
+    } else if (data) {
+      console.log('채택 포인트만큼 차감 완료 : ', data);
+    }
+    console.log('updateUserPointForMentee data : ', data); // 함수 정상 작동
+    console.log('Current points:', typeof points, points);
+    const buyProduct = (adoptionPoint: number) => {
+      setPoints(points - adoptionPoint);
+    };
+    buyProduct(adoptionPoint);
+  };
+
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <>
@@ -195,7 +233,8 @@ const resumeDetail = ({ params }: Props) => {
           {isAdopted}
           <br />
           {usePoints}
-          <button onClick={() => handleAdoption()}> 채택 완료</button>
+          {/* 멘토가 아닐 시에만 채택하기 버튼 뜨게 함 */}
+          {userType === 'mentee' ? <button onClick={() => handleAdoption()}> 채택하기 </button> : ''}
         </div>
       </div>
     </>

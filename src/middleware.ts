@@ -57,7 +57,8 @@ export function middleware(request: NextRequest) {
 
   if (allCookies.length === 0) {
     // 로그인인된 사용자만 마이페이지로 시작하는 url에 접근하도록 허용
-    if (request.nextUrl.pathname.startsWith('/mypage')) {
+    const redirectPathsIsLogin = ['/mypage', '/tech_interview', '/resumeadd', '/resume'];
+    if (redirectPathsIsLogin.includes(request.nextUrl.pathname)) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
   } else {
@@ -73,7 +74,7 @@ export function middleware(request: NextRequest) {
 }
 export const config = {
   // 이 Middleware가 동작할 경로들을 추가해주면된다.
-  matcher: ['/login', '/signup/mentee', '/signup/mento', '/mypage']
+  matcher: ['/login', '/signup/mentee', '/signup/mento', '/mypage', '/tech_interview', '/resumeadd', '/resume']
 };
 
 //==================페이지 리다이렉트 2

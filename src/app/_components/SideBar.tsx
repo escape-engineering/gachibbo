@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { FiBookOpen, FiHome, FiLogOut, FiFileText } from 'react-icons/fi'; // 필요한 아이콘 추가
+import { FiBookOpen, FiHome, FiLogOut, FiFileText } from 'react-icons/fi';
 import useAuthStore from '@/store/useAuthStore';
 import LogoutButton from './LogoutButton';
 
