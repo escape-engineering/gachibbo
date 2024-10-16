@@ -219,7 +219,9 @@ src
 
 ##5. 트러블 슈팅
 + 강수진
+  
   ![image](https://github.com/user-attachments/assets/ecaf8601-1ba3-436e-9b57-7195f88862e3)
+
  Supabase를 사용하는 도중 업데이트가 안되는 문제가 발생했다. console을 찍어가며 확인했
 는데 data가 계속 빈 배열을 뱉어내고 있었다. 구글링을 하다가 RLS 정책을 바꾸면 된다는 것
 을 확인하고 auth의 정책을 바꾸려다 point가 auth 테이블에 있는 것 보단 따로 table을 만드
