@@ -43,4 +43,6 @@ export interface CommentType {
   feedback_desc: string;
   feedback_isSelected: boolean;
   user_name: string;
+  image_url: string;
+  write_date: string;
 }

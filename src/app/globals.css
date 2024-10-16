@@ -210,3 +210,7 @@ table {
     @apply bg-background text-foreground;
   }
 }
+
+textarea {
+  resize: none;
+}
