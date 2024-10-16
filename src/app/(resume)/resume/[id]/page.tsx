@@ -191,9 +191,9 @@ const resumeDetail = ({ params }: Props) => {
       {isMento ? <></> : <MoveToResumeUpdate postId={params.id} />}
       <div className="postDetailMainBox">
         {/* pdf 크기가 1280 * 720이 넘는 경우, overflow 처리 */}
-        <div style={{ width: '80vw', height: '720px', overflow: 'auto' }}>
+        <div style={{ width: '70vw', height: '1080px', overflow: 'auto' }} className="pdfviewer">
           <Document file={`${resumeList[0]?.resume_url}`} onLoadSuccess={onDocumentLoadSuccess}>
-            <Page width={1180} height={720} scale={pageScale} pageNumber={pageNumber} />
+            <Page width={980} height={720} scale={pageScale} pageNumber={pageNumber} />
           </Document>
         </div>
         <div>
@@ -241,7 +241,7 @@ const resumeDetail = ({ params }: Props) => {
         <hr />
 
         <div className="border-2">
-          <Recommend params={params.id} />
+          <Recommend params={params.id} writerId={resumeList[0]?.user_uuid} />
         </div>
       </div>
     </>

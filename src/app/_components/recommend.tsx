@@ -6,18 +6,19 @@ import { CommentType } from '@/types/ResumeType';
 import browserClient from '@/utils/supabase/client';
 import useAuthStore from '@/store/useAuthStore';
 
-const recommend = ({ params }: { params: string }) => {
+const recommend = ({ params, writerId }: { params: string; writerId: string }) => {
   const supabase = createClient();
   const [comment, setComment] = useState<CommentType[]>([]);
   const [contents, setContents] = useState('');
 
   const [userId, setUserId] = useState('');
-  const { userName } = useAuthStore();
+  const { userName, userImg } = useAuthStore();
 
   //채택 관련 useState
   const [isAdopted, setIsAdopted] = useState(false);
   const [points, setPoints] = useState(0);
   const [usePoints, setUsePoints] = useState(0);
+  const [isFeedbackAdopted, setIsFeedbackAdopted] = useState(false);
 
   useEffect(() => {
     const getUserId = async () => {
@@ -52,7 +53,8 @@ const recommend = ({ params }: { params: string }) => {
       post_id: params,
       user_uuid: userId,
       feedback_desc: contents,
-      user_name: userName
+      user_name: userName,
+      image_url: userImg
     };
 
     if (contents.length === 0) {
@@ -76,7 +78,7 @@ const recommend = ({ params }: { params: string }) => {
       const { data: pointData, error: pointError } = await supabase
         .from('point')
         .select('user_point')
-        .eq('user_id', '2cc0b3c7-661a-4631-a6f8-6a204b89976c');
+        .eq('user_id', userId);
       if (pointError) {
         console.error('Error fetching data getPoint : ', pointError.message);
       } else if (pointData) {
@@ -87,7 +89,7 @@ const recommend = ({ params }: { params: string }) => {
       const { data: isAdoptedData, error: isAdoptedError } = await supabase
         .from('post_detail')
         .select('isadopted')
-        .eq('post_id', 'ed6fb1c8-9ea9-492c-b7d7-3911d74cf56a');
+        .eq('post_id', params);
       if (isAdoptedError) {
         console.error('Error fetching data getPoint : ', isAdoptedError.message);
       } else if (isAdoptedData) {
@@ -98,7 +100,7 @@ const recommend = ({ params }: { params: string }) => {
       const { data: usePointData, error: usePointError } = await supabase
         .from('post_detail')
         .select('use_point')
-        .eq('post_id', 'ed6fb1c8-9ea9-492c-b7d7-3911d74cf56a');
+        .eq('post_id', params);
       if (usePointError) {
         console.error('Error fetching data getPoint : ', usePointError.message);
       } else if (usePointData) {
@@ -114,7 +116,7 @@ const recommend = ({ params }: { params: string }) => {
     const { data, error } = await supabase
       .from('point')
       .update({ user_point: points - adoptionPoint })
-      .eq('user_id', '2cc0b3c7-661a-4631-a6f8-6a204b89976c')
+      .eq('user_id', userId)
       .select('user_point');
     if (error) {
       console.error('Error updating data updateUserPointInResume : ', error.message);
@@ -129,12 +131,12 @@ const recommend = ({ params }: { params: string }) => {
     buyProduct(adoptionPoint);
   };
   //채택 함수
-  const handleAdoption = async () => {
+  const handleAdoption = async (feedback_id: string) => {
     if (isAdopted === false) {
       const { data, error } = await supabase
         .from('post_detail')
         .update({ isadopted: true })
-        .eq('post_id', 'ed6fb1c8-9ea9-492c-b7d7-3911d74cf56a')
+        .eq('post_id', params)
         .select('isadopted');
       if (error) {
         console.error('Error updating data isadoptedData : ', error.message);
@@ -146,6 +148,20 @@ const recommend = ({ params }: { params: string }) => {
     } else {
       alert('동작 그만 밑장빼기냐?');
     }
+
+    const { data: feedbackData, error: feedbackError } = await supabase
+      .from('post_feedback')
+      .update({ feedback_isSelected: true })
+      .eq('feedback_id', feedback_id)
+      .select('feedback_isSelected');
+    if (feedbackError) {
+      console.error('Error updating data isadoptedData : ', feedbackError.message);
+    } else if (feedbackData) {
+      console.log('피드백 상태 변경 완료 : ', feedbackData);
+    }
+    console.log('updatefeedbackisadoptedData : ', feedbackData); // 함수 정상 작동
+    setIsFeedbackAdopted(!isFeedbackAdopted);
+    getComment();
   };
   //is
   useEffect(() => {
@@ -160,17 +176,16 @@ const recommend = ({ params }: { params: string }) => {
       <div>
         {comment.map((comment) => {
           return (
-            <div key={comment.feedback_id}>
+            <div key={comment.feedback_id} className="commentEach">
+              <img src={`${comment.image_url}`}/>
               <p>{comment.feedback_desc}</p>
               <p>{comment.user_name}</p>
-              <p>{comment.feedback_isSelected}</p>
-              <div className="border-2">
-                ResumePage{points}
-                {isAdopted}
-                <br />
-                {usePoints}
-                <button onClick={() => handleAdoption()}> 채택 완료</button>
-              </div>
+              <p>{comment.feedback_isSelected === true ? '채택완료' : ''}</p>
+              {writerId === userId && (
+                <div className="border-2">
+                  <button onClick={() => handleAdoption(comment.feedback_id)}>채택</button>
+                </div>
+              )}
             </div>
           );
         })}
