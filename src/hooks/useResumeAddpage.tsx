@@ -9,12 +9,15 @@ import {
   updateTransformedData,
   uploadResumeData,
   uploadTransformedData
-} from '@/utils/resume/server-action';
+} from '@/utils/resume/client-actions';
 import { updatePdfToStorage, uploadPdfToStorage } from '@/utils/resume/client-actions';
 import browserClient from '@/utils/supabase/client';
 import { transformResumeData } from '@/services/resumeadd/resumeaddServices';
+import { useRouter } from 'next/navigation';
 
 const useResumeAddpage = () => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [title, handleTitle, titleRef, setTitle] = useInput('');
   const [name, handleName, nameRef, setName] = useInput('');
   const [gender, handleGender, genderRef, setGender] = useInput('');
@@ -121,10 +124,15 @@ const useResumeAddpage = () => {
     if (!isValueValid(region, '근무 희망 지역을 작성해주세요.', regionRef)) return false;
     if (!isValueValid(address, '주소를 작성해주세요.', addressRef)) return false;
     if (!isValueValid(resumeDesc, '이력서 관련 내용을 작성해주세요.', resumeDescRef)) return false;
+    return true;
   };
   const handleUploadPdf = async (isUpdate: boolean) => {
+    setIsLoading(true);
     const isValidToUploadData = await isValidToUpload();
-    if (!isValidToUploadData) return;
+    if (!isValidToUploadData) {
+      setIsLoading(false);
+      return;
+    }
     const doc = await makeResumePdf(profileImg, name, phoneNum, email, expArray, eduArray, licArray);
     const pdfDoc = doc.output('blob');
     const pdfFile = new File([pdfDoc], `${title}`, { type: 'application/pdf' });
@@ -135,6 +143,7 @@ const useResumeAddpage = () => {
 
     if (pdfError) {
       console.log('pdfError :>> ', pdfError);
+      setIsLoading(false);
       throw new Error(pdfError.message);
     }
     const {
@@ -165,32 +174,36 @@ const useResumeAddpage = () => {
 
     if (resumePostError) {
       console.log('resumePostError :>> ', resumePostError);
+      setIsLoading(false);
       throw new Error(resumePostError.message);
     }
 
     !!eduArray.length &&
-      eduArray.forEach(async (edu) => {
+      eduArray.map(async (edu) => {
         const eduFormData: EduFormType = transformResumeData<EducationType>(postId, userId, edu);
         const { data: eduPostDtat, error: eduPostError } = isUpdate
           ? await updateTransformedData<EduFormType, keyof EduFormType>(eduFormData, 'post_detail_education', 'edu_id')
-          : await uploadTransformedData(eduFormData, 'post_detail_education');
+          : await uploadTransformedData<EduFormType>(eduFormData, 'post_detail_education');
       });
 
     !!expArray.length &&
-      expArray.forEach(async (exp) => {
+      expArray.map(async (exp) => {
         const expFormData: ExpFormType = transformResumeData<ExperienceType>(postId, userId, exp);
         const { data: expPostData, error: expPostError } = isUpdate
           ? await updateTransformedData<ExpFormType, keyof ExpFormType>(expFormData, 'post_detail_experience', 'exp_id')
-          : await uploadTransformedData(expFormData, 'post_detail_experience');
+          : await uploadTransformedData<ExpFormType>(expFormData, 'post_detail_experience');
       });
 
     !!licArray.length &&
-      licArray.forEach(async (lic) => {
+      licArray.map(async (lic) => {
         const licFormData = transformResumeData<LicenseType>(postId, userId, lic);
         const { data: licPostData, error: licPostError } = isUpdate
           ? await updateTransformedData<LicFormType, keyof LicFormType>(licFormData, 'post_detail_license', 'lic_id')
-          : await uploadTransformedData(licFormData, 'post_detail_license');
+          : await uploadTransformedData<LicFormType>(licFormData, 'post_detail_license');
       });
+
+    setIsLoading(false);
+    router.push('/resume');
   };
 
   const savePdfToLocal = async () => {
@@ -198,6 +211,7 @@ const useResumeAddpage = () => {
     doc.save(`${title ? title : '이력서'}`);
   };
   return {
+    isLoading,
     openNewTabForPdf,
     handleUploadPdf,
     savePdfToLocal,
