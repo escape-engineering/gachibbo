@@ -11,7 +11,7 @@ const SideBar = () => {
   const { userImg, userName } = useAuthStore();
 
   return (
-    <aside className="flex flex-col justify-between h-[100vh] bg-[#064F32] py-[100px] px-[20px]">
+    <aside className="fixed top-0 left-0 flex flex-col justify-between w-[92px] h-[100vh] bg-[#064F32] py-[100px] px-[20px]">
       <div className="flex flex-col justify-center items-center gap-[20px]">
         <Link className="writingMode-vertical-lr text-white" href={'/'}>
           홈
