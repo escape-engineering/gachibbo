@@ -182,9 +182,12 @@ const TechInterviewGranage = () => {
           총 점수: {score} / {responses.length}
         </p>
         <p className="text-lg mb-4">기술 면접 생성일: {sessionDate || '날짜 정보가 없습니다.'}</p>
-        <div className="mt-4 text-center">
-          <Link href="/" className="px-4 py-2 mt-4 bg-green-500 text-white rounded-md">
-            메인으로 돌아가기
+        <div className="mt-4 text-center flex w-full justify-around">
+          <Link href="/tech_interview" className="px-4 mr-2 py-2 mt-4 bg-green-500 text-white rounded-md">
+            문제 다시 풀기
+          </Link>
+          <Link href="/mypage" className="px-4 py-2 ml-2 mt-4 bg-green-500 text-white rounded-md">
+            마이페이지
           </Link>
         </div>
       </Modal>
