@@ -54,7 +54,8 @@ const resumeDetail = ({ params }: Props) => {
   }
 
   return (
-    <>
+    <div className="max-w-full my-[70px] mx-auto bg-white px-20 pb-20 pt-10 rounded-[20px]">
+      <h1 className="font-bold text-4xl m-10">{resumeList[0]?.post_title}</h1>
       {/* 멘티라면 수정버튼 보이도록 */}
       {isMento ? <></> : <MoveToResumeUpdate postId={params.id} />}
       <div className="postDetailMainBox">
@@ -109,10 +110,10 @@ const resumeDetail = ({ params }: Props) => {
         <hr />
 
         <div className="border-2">
-          <Recommend params={params.id} writerId={resumeList[0]?.user_uuid} />
+          <Recommend params={params.id} writerId={resumeList[0]?.user_uuid} pageAdoped={resumeList[0]?.isadopted} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
