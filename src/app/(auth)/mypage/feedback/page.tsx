@@ -16,7 +16,7 @@ const Page = () => {
   const fetchFeedbacks = async (userUid: string) => {
     const { data, error } = await supabase
       .from('post_feedback')
-      .select(`user_uuid, post_id, feedback_desc, feedback_isSelected, post_detail (post_title)`)
+      .select(`user_uuid, post_id, feedback_desc, feedback_isSelected, created_at, post_detail(post_title)`)
       .eq('user_uuid', userUid);
     if (error) {
       console.error('error => ', error);
