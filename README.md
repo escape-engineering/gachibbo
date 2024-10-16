@@ -217,7 +217,7 @@ src
   
 
 ## 5. 트러블 슈팅
-+ 강수진
+### 강수진
   
   ![image](https://github.com/user-attachments/assets/ecaf8601-1ba3-436e-9b57-7195f88862e3)
 
@@ -239,6 +239,10 @@ src
 - CSR페이지 에러 핸들링 고도화
 - state와 로직코드 리팩토링
 - tanstack query를 사용한 서버상태관리
+
+### 강수진
+- 로직 코드 리팩토링
+- tanstack query를 사용한 서버 상태관리
 
 ## 7. 프로젝트 후기
 + 강수진 : 스케일이 너무너무 커서 이걸 일주일만에 다 할 수 있을까 걱정했는데 역시 다 하긴
