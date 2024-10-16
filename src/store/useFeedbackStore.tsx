@@ -3,11 +3,12 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type Feedback = {
+  user_uuid?: string;
   post_id: number;
   feedback_desc: string;
   feedback_isSelected: boolean;
-  created_at: string;
-  post_detail: { post_title: string };
+  created_at?: string;
+  post_detail: { post_title: string }[] | { post_title: string };
 };
 
 type FeedbackState = {
