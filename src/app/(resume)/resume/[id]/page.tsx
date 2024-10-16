@@ -30,6 +30,7 @@ const resumeDetail = ({ params }: Props) => {
   const [points, setPoints] = useState(0);
   const [usePoints, setUsePoints] = useState(0);
   const [userType, setUserType] = useState('');
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const getResumeList = async () => {
@@ -49,11 +50,21 @@ const resumeDetail = ({ params }: Props) => {
   //////////////////////////////////////////////////////////////// 채택함수 //////////////////////////////////////////////////////////
   useEffect(() => {
     const getPointAndIsAdopted = async () => {
+      //유저 data 가져오기
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+      if (!user) {
+        return '';
+      }
+      console.log('유저data', user?.user_metadata);
+      setUserId(user?.user_metadata.sub);
+
       //포인트 데이터 가져오기
       const { data: pointData, error: pointError } = await supabase
         .from('point')
         .select('user_point')
-        .eq('user_id', '2cc0b3c7-661a-4631-a6f8-6a204b89976c');
+        .eq('user_id', userId);
       if (pointError) {
         console.error('Error fetching data getPoint : ', pointError.message);
       } else if (pointData) {
@@ -75,7 +86,7 @@ const resumeDetail = ({ params }: Props) => {
       const { data: usePointData, error: usePointError } = await supabase
         .from('post_detail')
         .select('use_point')
-        .eq('post_id', 'ed6fb1c8-9ea9-492c-b7d7-3911d74cf56a');
+        .eq('post_id', userId);
       if (usePointError) {
         console.error('Error fetching data getPoint : ', usePointError.message);
       } else if (usePointData) {
@@ -86,19 +97,13 @@ const resumeDetail = ({ params }: Props) => {
       const { data: userTypeData, error: userTypeError } = await supabase
         .from('auth')
         .select('user_type')
-        .eq('id', '2cc0b3c7-661a-4631-a6f8-6a204b89976c');
+        .eq('id', userId);
       if (userTypeError) {
         console.error('Error fetching data usertype : ', userTypeError.message);
       } else if (userTypeData) {
         console.log('usertype test', userTypeData[1]?.user_type);
         setUserType(userTypeData[1]?.user_type);
       }
-    };
-
-    const getUserData = async () => {
-      const {
-        data: { user }
-      } = await supabase.auth.getUser();
     };
 
     getPointAndIsAdopted();
@@ -114,7 +119,7 @@ const resumeDetail = ({ params }: Props) => {
     const { data, error } = await supabase
       .from('point')
       .update({ user_point: points - adoptionPoint })
-      .eq('user_id', '2cc0b3c7-661a-4631-a6f8-6a204b89976c')
+      .eq('user_id', userId)
       .select('user_point');
     if (error) {
       console.error('Error updating data updateUserPointForMentee : ', error.message);
