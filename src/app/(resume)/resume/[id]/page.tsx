@@ -66,51 +66,57 @@ const resumeDetail = ({ params }: Props) => {
           </Document>
         </div>
         <div>
-          <p>
-            Page {pageNumber} of {numPages}
-          </p>
-
-          <p>페이지 이동 버튼</p>
-          {/* 버튼을 누르면 setPageNumber가 바뀌는데, 만약 numPages과 pageNumber가 같으면 pageNumber, 아니면 pageNumber에 +1인 것. */}
-          <button
-            onClick={() => {
-              setPageNumber(numPages === pageNumber ? pageNumber : pageNumber + 1);
-            }}
-          >
-            {' '}
-            +
-          </button>
-          <button
-            onClick={() => {
-              setPageNumber(pageNumber === 1 ? pageNumber : pageNumber - 1);
-            }}
-          >
-            {' '}
-            -
-          </button>
-
-          <p>페이지 스케일</p>
-          <button
-            onClick={() => {
-              setPageScale(pageScale === 3 ? 3 : pageScale + 0.1);
-            }}
-          >
-            {' '}
-            +
-          </button>
-          <button
-            onClick={() => {
-              setPageScale(pageScale - 1 < 1 ? 1 : pageScale - 1);
-            }}
-          >
-            {' '}
-            -
-          </button>
-        </div>
-        <hr />
-
-        <div className="border-2">
-          <Recommend params={params.id} writerId={resumeList[0]?.user_uuid} pageAdoped={resumeList[0]?.isadopted} />
+          <div className="my-[25px] py-[25px] pl-[25px] bg-[#E2EBEB] rounded-[15px]">
+            <p>
+              Page {pageNumber} of {numPages}
+            </p>
+            <div className="flex flex-row items-center mb-[10px]">
+              <p>페이지 이동 버튼</p>
+              {/* 버튼을 누르면 setPageNumber가 바뀌는데, 만약 numPages과 pageNumber가 같으면 pageNumber, 아니면 pageNumber에 +1인 것. */}
+              <button
+                className="px-[12px] py-[6px] bg-[#14532d] text-white rounded-[5px] ml-[7px]"
+                onClick={() => {
+                  setPageNumber(numPages === pageNumber ? pageNumber : pageNumber + 1);
+                }}
+              >
+                {' '}
+                +
+              </button>
+              <button
+                className="px-[14px] py-[6px] bg-[#14532d] text-white rounded-[5px] ml-[7px]"
+                onClick={() => {
+                  setPageNumber(pageNumber === 1 ? pageNumber : pageNumber - 1);
+                }}
+              >
+                {' '}
+                -
+              </button>
+            </div>
+            <div className="flex flex-row items-center">
+              <p>페이지 스케일</p>
+              <button
+                className="px-[12px] py-[6px] bg-[#14532d] text-white rounded-[5px] ml-[7px]"
+                onClick={() => {
+                  setPageScale(pageScale === 3 ? 3 : pageScale + 0.1);
+                }}
+              >
+                {' '}
+                +
+              </button>
+              <button
+                className="px-[14px] py-[6px] bg-[#14532d] text-white rounded-[5px] ml-[7px]"
+                onClick={() => {
+                  setPageScale(pageScale - 1 < 1 ? 1 : pageScale - 1);
+                }}
+              >
+                {' '}
+                -
+              </button>
+            </div>
+          </div>
+          <div className="border-2">
+            <Recommend params={params.id} writerId={resumeList[0]?.user_uuid} pageAdoped={resumeList[0]?.isadopted} />
+          </div>
         </div>
       </div>
     </div>

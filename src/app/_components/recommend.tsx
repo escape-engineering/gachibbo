@@ -6,7 +6,7 @@ import { CommentType } from '@/types/ResumeType';
 import browserClient from '@/utils/supabase/client';
 import useAuthStore from '@/store/useAuthStore';
 
-const recommend = ({ params, writerId, pageAdoped }: { params: string; writerId: string; pageAdoped:boolean }) => {
+const recommend = ({ params, writerId, pageAdoped }: { params: string; writerId: string; pageAdoped: boolean }) => {
   const supabase = createClient();
   const [comment, setComment] = useState<CommentType[]>([]);
   const [contents, setContents] = useState('');
@@ -201,12 +201,16 @@ const recommend = ({ params, writerId, pageAdoped }: { params: string; writerId:
               </div>
               <div>
                 <p className="font-bold">{comment.user_name}</p>
-                <p className="font-bold">{comment.write_date}</p>
-                <p className="whitespace-pre mt-[4px]">{comment.feedback_desc}</p>
-                <p className="px-5 py-2 bg-[#06603b] text-white rounded-[10px] hover:bg-[#ffa800] text-[15px] mt-5">
-                  {pageAdoped === true ? '채택완료' : null}
+                <p className="font-medium text-[12px]">
+                  {comment.write_date?.slice(0, 16).replaceAll('-', '.').replaceAll('T', '  ')}
                 </p>
-                {writerId === userId && comment.feedback_isSelected === false && (
+                <p className="whitespace-pre mt-[4px]">{comment.feedback_desc}</p>
+
+                {pageAdoped === true && comment.feedback_isSelected === true && (
+                  <div className="px-5 py-2 bg-[#06603b] text-white rounded-[10px] text-[15px] mt-5">채택완료</div>
+                )}
+
+                {writerId === userId && pageAdoped === false && comment.feedback_isSelected === false && (
                   <div>
                     <button
                       className="px-5 py-2 bg-[#06603b] text-white rounded-[10px] hover:bg-[#ffa800] text-[15px] mt-5"
