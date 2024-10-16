@@ -15,16 +15,6 @@ import { useRouter } from 'next/navigation';
 const MentoSignUpPage = () => {
   const router = useRouter();
 
-  // const { isLoggedIn } = useAuthStore();
-  // const router = useRouter();
-
-  // // 이미 로그인한 사용자인지 구분해서 접근막기
-  // useEffect(() => {
-  //   if (isLoggedIn) {
-  //     router.replace('/');
-  //   }
-  // }, [isLoggedIn, router]);
-
   //zod
   const signUpSchema = z.object({
     user_id: z
@@ -56,6 +46,33 @@ const MentoSignUpPage = () => {
     },
     resolver: zodResolver(signUpSchema)
   });
+
+  // 프로필 이미지 등록 핸들러
+  const handleImgUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) {
+      console.log('파일을 선택해 주세요.');
+      return;
+    }
+
+    const userId = watch('user_id');
+
+    const { data: imgData, error: imgError } = await browserClient.storage
+      .from('user_image')
+      .upload(`${userId}/${file.name}`, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+    if (imgError) {
+      console.log('이미지 오류 => ', imgError);
+    }
+
+    // 업로드된 이미지의 URL 가져오기
+    const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/user_image/${userId}/${file.name}`;
+
+    setValue('image_url', imageUrl);
+  };
 
   // 폼 제출 함수
   const onSubmit = async () => {
@@ -110,65 +127,121 @@ const MentoSignUpPage = () => {
   };
 
   return (
-    <section>
-      <h1>새로운 멘토님, 환영합니다!</h1>
-      <h3>아래에 가입정보를 작성해주세요.</h3>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="user_id">아이디</label>
-          <input {...register('user_id')} id="user_id" type="text" required />
-          {formState.errors.user_id && <span>{formState.errors.user_id.message}</span>}
+    <section className="p-4 bg-[#efefef] w-full ">
+      <h1 className="text-2xl font-bold mb-4">회원가입</h1>
+
+      <article className="flex flex-col items-center bg-white py-32 gap-8">
+        <div className="flex flex-col justify-center items-center gap-4">
+          <h1 className="text-3xl">새로운 멘토님, 환영합니다!</h1>
+          <h3 className="text-lx text-[#777]">아래에 가입정보를 작성해주세요.</h3>
         </div>
-        <div>
-          <label htmlFor="user_pw">비밀번호</label>
-          <input {...register('user_pw')} id="user_pw" type="password" required />
-          {formState.errors.user_pw && <span>{formState.errors.user_pw.message}</span>}
-        </div>
-        <div>
-          <label htmlFor="user_name">닉네임</label>
-          <input {...register('user_name')} id="user_name" type="text" required />
-          {formState.errors.user_name && <span>{formState.errors.user_name.message}</span>}
-        </div>
-        <div>
-          <label htmlFor="email">이메일</label>
-          <input {...register('email')} id="email" type="email" required />
-          {formState.errors.email && <span>{formState.errors.email.message}</span>}
-        </div>
-        <div>
-          <label>경력</label>
-          <Select onValueChange={(value) => setValue('mento_work_experience', value)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="경력을 선택해 주세요." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1~2 년차 주니어">1~2 년차 주니어</SelectItem>
-              <SelectItem value="3~5 년차 시니어">3~5 년차 시니어</SelectItem>
-              <SelectItem value="6년 이상 리더">6년 이상 리더</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label>현직에서 일하고 계신가요?</label>
-          <RadioGroup onValueChange={(value) => setValue('mento_current', value === 'yes')} defaultValue="no">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="yes" id="yes" />
-              <Label htmlFor="yes">예</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="no" id="no" />
-              <Label htmlFor="no">아니오</Label>
-            </div>
-          </RadioGroup>
-        </div>
-        <Button
-          onClick={() => {
-            console.log('회원가입 폼 제출됨');
-          }}
-          type="submit"
-        >
-          회원가입
-        </Button>
-      </form>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-[500px] mb-5">
+          <div className="flex flex-row items-center">
+            <label htmlFor="user_id" className="w-24  text-xl">
+              아이디
+            </label>
+            <input
+              {...register('user_id')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="user_id"
+              type="text"
+              required
+            />
+            {formState.errors.user_id && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_id.message}</span>
+            )}
+          </div>
+          <div className="flex flex-row items-center">
+            <label htmlFor="user_pw" className="w-24  text-xl">
+              비밀번호
+            </label>
+            <input
+              {...register('user_pw')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="user_pw"
+              type="password"
+              required
+            />
+            {formState.errors.user_pw && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_pw.message}</span>
+            )}
+          </div>
+          <div className="flex flex-row items-center ">
+            <label htmlFor="user_name" className="w-24 text-xl">
+              이름
+            </label>
+            <input
+              {...register('user_name')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="user_name"
+              type="text"
+              required
+            />
+            {formState.errors.user_name && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_name.message}</span>
+            )}
+          </div>
+          <div className="flex flex-row items-center">
+            <label htmlFor="email" className="w-24  text-xl">
+              이메일
+            </label>
+            <input
+              {...register('email')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="email"
+              type="email"
+              required
+            />
+            {formState.errors.email && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.email.message}</span>
+            )}
+          </div>
+          <div className="flex flex-row items-center">
+            <label className="w-24  text-xl">경력</label>
+            <Select onValueChange={(value) => setValue('mento_work_experience', value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="경력을 선택해 주세요." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1~2 년차 주니어">1~2 년차 주니어</SelectItem>
+                <SelectItem value="3~5 년차 시니어">3~5 년차 시니어</SelectItem>
+                <SelectItem value="6년 이상 리더">6년 이상 리더</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className=" flex flex-row justify-between">
+            <label className="  text-xl">현직에서 일하고 계신가요?</label>
+            <RadioGroup
+              onValueChange={(value) => setValue('mento_current', value === 'yes')}
+              defaultValue="no"
+              className="flex flex-row gap-10"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="yes" id="yes" />
+                <Label htmlFor="yes">예</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="no" id="no" />
+                <Label htmlFor="no">아니오</Label>
+              </div>
+            </RadioGroup>
+          </div>
+          <div className="flex flex-col p-4 bg-[#efefef] gap-3">
+            <label htmlFor="image_url" className="text-xl">
+              프로필 이미지 등록
+            </label>
+            <input type="file" accept="image/*" onChange={handleImgUpload} />
+          </div>
+          <Button
+            onClick={() => {
+              console.log('회원가입 폼 제출됨');
+            }}
+            type="submit"
+          >
+            회원가입
+          </Button>
+        </form>
+      </article>
     </section>
   );
 };

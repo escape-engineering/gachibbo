@@ -27,7 +27,11 @@
     }
 
     .postDetailMainBox{
+        width: 98vw;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        margin-left: 192px;
     }
 }
