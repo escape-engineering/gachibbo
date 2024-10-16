@@ -78,9 +78,6 @@ const Mypage = () => {
           <div>
             <h2 className="text-xl  mb-4">최근 나의 면접</h2>
           </div>
-          <div>
-            <h1 className="text-xl  mb-4">최근 나의 이력서</h1>
-          </div>
         </article>
       )}
     </section>
