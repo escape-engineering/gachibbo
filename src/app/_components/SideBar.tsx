@@ -10,8 +10,8 @@ const SideBar = () => {
   const { userImg, userName, isLoggedIn } = useAuthStore();
 
   return (
-    <div className="flex min-h-screen">
-      <div className="w-[80px] bg-green-900 flex flex-col justify-between items-center h-full py-10">
+    <div className="fixed flex h-[100vh]">
+      <div className="w-[92px] bg-green-900 flex flex-col justify-between items-center h-full py-10">
         <nav className="flex flex-col items-center gap-6">
           <Link href="/" className="text-white flex flex-col items-center mb-2 hover:text-green-300">
             <FiHome size={24} />
@@ -36,12 +36,14 @@ const SideBar = () => {
                 <LogoutButton />
               </div>
               <hr className="border-t-[2px] border-white w-full mt-4" />
-              <img
-                className="border border-black border-solid w-[40px] h-[40px] mt-4 rounded-full"
-                src={`${userImg}`}
-                alt={`${userName}`}
-              />
-              <span className="text-white text-sm mt-1">{userName}</span>
+              <Link href={'/mypage'} className="flex flex-col items-center">
+                <img
+                  className="border border-black border-solid w-[40px] h-[40px] mt-4 rounded-full"
+                  src={`${userImg}`}
+                  alt={`${userName}`}
+                />
+                <span className="text-white text-sm mt-1">{userName}</span>
+              </Link>
             </div>
           ) : (
             <Link href="/login" className="text-white flex flex-col items-center hover:text-green-300">
