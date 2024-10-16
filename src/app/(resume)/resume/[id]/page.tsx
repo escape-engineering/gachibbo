@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/client';
 import React, { useEffect, useState } from 'react';
 import { ResumeType } from '@/types/ResumeType';
 import { Document, Page, pdfjs } from 'react-pdf';
+import Recommend from '@/app/_components/recommend';
 import 'core-js/full/promise/with-resolvers.js';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -227,6 +228,7 @@ const resumeDetail = ({ params }: Props) => {
         <hr />
 
         <div className="border-2">
+          <Recommend params={params.id} />
           ResumePage{points}
           {isAdopted}
           <br />
