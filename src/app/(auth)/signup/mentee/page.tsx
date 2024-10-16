@@ -127,43 +127,92 @@ const MenteeSignUpPage = () => {
   };
 
   return (
-    <section>
-      <h1>새로운 멘티님, 환영합니다!</h1>
-      <h3>아래에 가입정보를 작성해주세요.</h3>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="user_id">아이디</label>
-          <input {...register('user_id')} id="user_id" type="text" required />
-          {formState.errors.user_id && <span>{formState.errors.user_id.message}</span>}
+    <section className="p-4 bg-[#efefef] w-full ">
+      <h1 className="text-2xl font-bold mb-4">회원가입</h1>
+
+      <article className="flex flex-col items-center bg-white py-32 gap-8">
+        <div className="flex flex-col justify-center items-center gap-4">
+          <h1 className="text-3xl">새로운 멘티님, 환영합니다!</h1>
+          <h3 className="text-lx text-[#777]">아래에 가입정보를 작성해주세요.</h3>
         </div>
-        <div>
-          <label htmlFor="user_pw">비밀번호</label>
-          <input {...register('user_pw')} id="user_pw" type="password" required />
-          {formState.errors.user_pw && <span>{formState.errors.user_pw.message}</span>}
-        </div>
-        <div>
-          <label htmlFor="user_name">닉네임</label>
-          <input {...register('user_name')} id="user_name" type="text" required />
-          {formState.errors.user_name && <span>{formState.errors.user_name.message}</span>}
-        </div>
-        <div>
-          <label htmlFor="email">이메일</label>
-          <input {...register('email')} id="email" type="email" required />
-          {formState.errors.email && <span>{formState.errors.email.message}</span>}
-        </div>
-        <div>
-          <label htmlFor="image_url">프로필 이미지 업로드</label>
-          <input type="file" accept="image/*" onChange={handleImgUpload} />
-        </div>
-        <Button
-          onClick={() => {
-            console.log('회원가입 폼 제출됨');
-          }}
-          type="submit"
-        >
-          회원가입
-        </Button>
-      </form>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-[500px] mb-5">
+          <div className="flex flex-row items-center">
+            <label htmlFor="user_id" className="w-24  text-xl">
+              아이디
+            </label>
+            <input
+              {...register('user_id')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="user_id"
+              type="text"
+              required
+            />
+            {formState.errors.user_id && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_id.message}</span>
+            )}
+          </div>
+          <div className="flex flex-row items-center">
+            <label htmlFor="user_pw" className="w-24  text-xl">
+              비밀번호
+            </label>
+            <input
+              {...register('user_pw')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="user_pw"
+              type="password"
+              required
+            />
+            {formState.errors.user_pw && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_pw.message}</span>
+            )}
+          </div>
+          <div className="flex flex-row items-center ">
+            <label htmlFor="user_name" className="w-24 text-xl">
+              이름
+            </label>
+            <input
+              {...register('user_name')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="user_name"
+              type="text"
+              required
+            />
+            {formState.errors.user_name && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.user_name.message}</span>
+            )}
+          </div>
+          <div className="flex flex-row items-center">
+            <label htmlFor="email" className="w-24  text-xl">
+              이메일
+            </label>
+            <input
+              {...register('email')}
+              className=" border border-gray-300 text-gray-900 text-sm  block p-2.5 w-full"
+              id="email"
+              type="email"
+              required
+            />
+            {formState.errors.email && (
+              <span className="text-sm text-[#e50000] -mt-2">{formState.errors.email.message}</span>
+            )}
+          </div>
+          <div className="flex flex-col p-4 bg-[#efefef] gap-3">
+            <label htmlFor="image_url" className="text-xl">
+              프로필 이미지 등록
+            </label>
+            <input type="file" accept="image/*" onChange={handleImgUpload} />
+          </div>
+          <Button
+            onClick={() => {
+              console.log('회원가입 폼 제출됨');
+            }}
+            type="submit"
+          >
+            회원가입
+          </Button>
+        </form>
+      </article>
     </section>
   );
 };
