@@ -177,13 +177,13 @@ const TechInterviewGranage = () => {
       </div>
 
       <Modal isOpen={isModalOpen} handleIsOpen={() => setIsModalOpen(false)}>
-        <h2 className="text-xl font-bold">채점 결과</h2>
-        <p className="text-lg">
+        <h2 className="text-xl font-bold mb-4">채점 결과</h2>
+        <p className="text-lg mb-4">
           총 점수: {score} / {responses.length}
         </p>
-        <p className="text-lg">기술 면접 생성일: {sessionDate || '날짜 정보가 없습니다.'}</p>
+        <p className="text-lg mb-4">기술 면접 생성일: {sessionDate || '날짜 정보가 없습니다.'}</p>
         <div className="mt-4 text-center">
-          <Link href="/" className="px-4 py-2 bg-green-500 text-white rounded-md">
+          <Link href="/" className="px-4 py-2 mt-4 bg-green-500 text-white rounded-md">
             메인으로 돌아가기
           </Link>
         </div>

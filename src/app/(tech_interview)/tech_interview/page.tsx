@@ -56,7 +56,7 @@ const TestPage = () => {
     };
 
     initializeTest();
-  }, []);
+  }, [userId]);
 
   // 사용자 답변 상태 관리
   const handleAnswerChange = (questionId: string, answer: string) => {
