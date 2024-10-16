@@ -15,7 +15,7 @@ const TechInterviewGranage = () => {
   const [gradedResponses, setGradedResponses] = useState<{ [key: string]: boolean | null }>({}); // 각 문제별 채점 결과
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [sessionDate, setSessionDate] = useState<string | null>(null);
-  const { userId } = useAuthStore();
+  const { userUid } = useAuthStore();
   const supabase = browserClient;
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -25,7 +25,7 @@ const TechInterviewGranage = () => {
       const { data: lastSession, error: sessionError } = await supabase
         .from('tech_sessions')
         .select('tech_session_id, tech_session_create_at')
-        .eq('user_uuid', userId)
+        .eq('user_uuid', userUid)
         .order('tech_session_create_at', { ascending: false }) // tech_session_create_at가 timestamp이고 그걸 이용해 최신 순으로 정렬
         .limit(1)
         .single();
@@ -91,7 +91,7 @@ const TechInterviewGranage = () => {
     };
 
     fetchLastSession();
-  }, [userId]);
+  }, [userUid]);
 
   // O/X 버튼 클릭 시 점수 계산 및 채점 상태 업데이트
   const handleGrade = (questionId: string, isCorrect: boolean) => {

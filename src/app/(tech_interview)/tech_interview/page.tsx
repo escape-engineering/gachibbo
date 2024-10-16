@@ -12,7 +12,7 @@ const TestPage = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false); // 제출 했을 때만 채점페이지로 이동 가능하게 하기 위해 상태관리
-  const { userId } = useAuthStore();
+  const { userUid } = useAuthStore();
   const sessionCreated = useRef(false); // 세션이 한번에 한개만 생성되도록 관리
   const supabase = browserClient;
 
@@ -25,7 +25,7 @@ const TestPage = () => {
       // 한 사이클을 tech_sessions (세션)테이블에 저장하기 위해 생성
       const { data: sessionData, error: sessionError } = await supabase
         .from('tech_sessions')
-        .insert({ user_uuid: userId })
+        .insert({ user_uuid: userUid })
         .select()
         .single();
 
@@ -57,7 +57,7 @@ const TestPage = () => {
     };
 
     initializeTest();
-  }, [userId]);
+  }, [userUid]);
 
   // 사용자 답변 상태 관리
   const handleAnswerChange = (questionId: string, answer: string) => {
