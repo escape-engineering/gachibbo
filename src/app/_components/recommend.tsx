@@ -173,23 +173,6 @@ const recommend = ({ params, writerId }: { params: string; writerId: string }) =
 
   return (
     <>
-      <div>
-        {comment.map((comment) => {
-          return (
-            <div key={comment.feedback_id} className="commentEach">
-              <img src={`${comment.image_url}`}/>
-              <p>{comment.feedback_desc}</p>
-              <p>{comment.user_name}</p>
-              <p>{comment.feedback_isSelected === true ? '채택완료' : ''}</p>
-              {writerId === userId && (
-                <div className="border-2">
-                  <button onClick={() => handleAdoption(comment.feedback_id)}>채택</button>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
       <form onSubmit={updateComment}>
         <textarea
           className="textareaCss"
@@ -202,6 +185,23 @@ const recommend = ({ params, writerId }: { params: string; writerId: string }) =
         ></textarea>
         <button type="submit">제출</button>
       </form>
+      <div>
+        {comment.map((comment) => {
+          return (
+            <div key={comment.feedback_id} className="commentEach">
+              <img src={`${comment.image_url}`} />
+              <p>{comment.feedback_desc}</p>
+              <p>{comment.user_name}</p>
+              <p>{comment.feedback_isSelected === true ? '채택완료' : ''}</p>
+              {writerId === userId && (
+                <div className="border-2">
+                  <button onClick={() => handleAdoption(comment.feedback_id)}>채택</button>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </>
   );
 };
