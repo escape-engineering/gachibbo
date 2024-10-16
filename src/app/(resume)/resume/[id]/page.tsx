@@ -31,12 +31,6 @@ const resumeDetail = ({ params }: Props) => {
   //멘토인지 확인하기 위한 userType, mento인지 비교하여 boolean으로 isMento지정
   const { userType } = useAuthStore();
   const isMento = userType === 'mento' ? true : false;
-  //채택 관련 useState
-  const [isAdopted, setIsAdopted] = useState(false);
-  const [points, setPoints] = useState(0);
-  const [usePoints, setUsePoints] = useState(0);
-  // const [userType, setUserType] = useState('');
-  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     const getResumeList = async () => {
@@ -53,140 +47,15 @@ const resumeDetail = ({ params }: Props) => {
     console.log('params', params);
     getResumeList();
   }, []);
-  //////////////////////////////////////////////////////////////// 채택함수 //////////////////////////////////////////////////////////
-  useEffect(() => {
-    const getPointAndIsAdopted = async () => {
-      //유저 data 가져오기
-      const {
-        data: { user }
-      } = await supabase.auth.getUser();
-      if (!user) {
-        return '';
-      }
-      console.log('유저data', user?.user_metadata);
-      setUserId(user?.user_metadata.sub);
 
-      //포인트 데이터 가져오기
-      const { data: pointData, error: pointError } = await supabase
-        .from('point')
-        .select('user_point')
-        .eq('user_id', userId);
-      if (pointError) {
-        console.error('Error fetching data getPoint : ', pointError.message);
-      } else if (pointData) {
-        console.log('유저 test', pointData[0]?.user_point);
-        setPoints(pointData[0]?.user_point);
-      }
-      //adopted 데이터 가져오기
-      const { data: isAdoptedData, error: isAdoptedError } = await supabase
-        .from('post_detail')
-        .select('isadopted')
-        .eq('post_id', params.id);
-      if (isAdoptedError) {
-        console.error('Error fetching data getPoint : ', isAdoptedError.message);
-      } else if (isAdoptedData) {
-        console.log('채택 test', isAdoptedData[0]?.isadopted);
-        setIsAdopted(isAdoptedData[0]?.isadopted);
-      }
-      //usePoint 값 가져오기
-      const { data: usePointData, error: usePointError } = await supabase
-        .from('post_detail')
-        .select('use_point')
-        .eq('post_id', userId);
-      if (usePointError) {
-        console.error('Error fetching data getPoint : ', usePointError.message);
-      } else if (usePointData) {
-        console.log('usePoint test', usePointData[0]?.use_point);
-        setUsePoints(usePointData[0]?.use_point);
-      }
-      // //멘토/멘티 상태값 가져오기
-      // const { data: userTypeData, error: userTypeError } = await supabase
-      //   .from('auth')
-      //   .select('user_type')
-      //   .eq('id', userId);
-      // if (userTypeError) {
-      //   console.error('Error fetching data usertype : ', userTypeError.message);
-      // } else if (userTypeData) {
-      //   console.log('usertype test', userTypeData[1]?.user_type);
-
-      // }
-    };
-
-    getPointAndIsAdopted();
-  }, []);
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     console.log(`numPages ${numPages}`);
     setNumPages(numPages);
   }
-  //////////////////////////////////////////////////////////////// 채택함수 //////////////////////////////////////////////////////////
-  //건 포인트 차감
-  const updateUserPointForMentee = async (adoptionPoint: number) => {
-    const { data, error } = await supabase
-      .from('point')
-      .update({ user_point: points - adoptionPoint })
-      .eq('user_id', userId)
-      .select('user_point');
-    if (error) {
-      console.error('Error updating data updateUserPointForMentee : ', error.message);
-    } else if (data) {
-      console.log('채택 포인트만큼 차감 완료 : ', data);
-    }
-    console.log('updateUserPointForMentee data : ', data); // 함수 정상 작동
-    console.log('Current points:', typeof points, points);
-    const buyProduct = (adoptionPoint: number) => {
-      setPoints(points - adoptionPoint);
-    };
-    buyProduct(adoptionPoint);
-  };
-  //채택 함수
-  const handleAdoption = async () => {
-    if (isAdopted === false) {
-      const { data, error } = await supabase
-        .from('post_detail')
-        .update({ isadopted: true })
-        .eq('post_id', 'ed6fb1c8-9ea9-492c-b7d7-3911d74cf56a')
-        .select('isadopted');
-      if (error) {
-        console.error('Error updating data isadoptedData : ', error.message);
-      } else if (data) {
-        console.log('채택 상태 변경 완료 : ', data);
-      }
-      console.log('updateisadoptedData : ', data); // 함수 정상 작동
-      setIsAdopted(!isAdopted);
-    } else {
-      alert('이미 채택된 게시글입니다');
-    }
-  };
-  //채택 함수가 작동하면 포인트 차감 함수가 돌아가게
-  useEffect(() => {
-    if (isAdopted) {
-      updateUserPointForMentee(usePoints);
-    }
-  }, [isAdopted]);
 
-  const updateUserPointForMento = async (adoptionPoint: number) => {
-    const { data, error } = await supabase
-      .from('point')
-      .update({ user_point: points - adoptionPoint })
-      .eq('user_id', 'fe479cde-9651-404a-b0ad-e36cbcc1795f')
-      .select('user_point');
-    if (error) {
-      console.error('Error updating data updateUserPointForMentee : ', error.message);
-    } else if (data) {
-      console.log('채택 포인트만큼 차감 완료 : ', data);
-    }
-    console.log('updateUserPointForMentee data : ', data); // 함수 정상 작동
-    console.log('Current points:', typeof points, points);
-    const buyProduct = (adoptionPoint: number) => {
-      setPoints(points - adoptionPoint);
-    };
-    buyProduct(adoptionPoint);
-  };
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
-    <>
+    <div className="max-w-full my-[70px] mx-auto bg-white px-20 pb-20 pt-10 rounded-[20px]">
+      <h1 className="font-bold text-4xl m-10">{resumeList[0]?.post_title}</h1>
       {/* 멘티라면 수정버튼 보이도록 */}
       {isMento ? <></> : <MoveToResumeUpdate postId={params.id} />}
       <div className="postDetailMainBox">
@@ -197,54 +66,60 @@ const resumeDetail = ({ params }: Props) => {
           </Document>
         </div>
         <div>
-          <p>
-            Page {pageNumber} of {numPages}
-          </p>
-
-          <p>페이지 이동 버튼</p>
-          {/* 버튼을 누르면 setPageNumber가 바뀌는데, 만약 numPages과 pageNumber가 같으면 pageNumber, 아니면 pageNumber에 +1인 것. */}
-          <button
-            onClick={() => {
-              setPageNumber(numPages === pageNumber ? pageNumber : pageNumber + 1);
-            }}
-          >
-            {' '}
-            +
-          </button>
-          <button
-            onClick={() => {
-              setPageNumber(pageNumber === 1 ? pageNumber : pageNumber - 1);
-            }}
-          >
-            {' '}
-            -
-          </button>
-
-          <p>페이지 스케일</p>
-          <button
-            onClick={() => {
-              setPageScale(pageScale === 3 ? 3 : pageScale + 0.1);
-            }}
-          >
-            {' '}
-            +
-          </button>
-          <button
-            onClick={() => {
-              setPageScale(pageScale - 1 < 1 ? 1 : pageScale - 1);
-            }}
-          >
-            {' '}
-            -
-          </button>
-        </div>
-        <hr />
-
-        <div className="border-2">
-          <Recommend params={params.id} writerId={resumeList[0]?.user_uuid} />
+          <div className="my-[25px] py-[25px] pl-[25px] bg-[#E2EBEB] rounded-[15px]">
+            <p>
+              Page {pageNumber} of {numPages}
+            </p>
+            <div className="flex flex-row items-center mb-[10px]">
+              <p>페이지 이동 버튼</p>
+              {/* 버튼을 누르면 setPageNumber가 바뀌는데, 만약 numPages과 pageNumber가 같으면 pageNumber, 아니면 pageNumber에 +1인 것. */}
+              <button
+                className="px-[12px] py-[6px] bg-[#14532d] text-white rounded-[5px] ml-[7px]"
+                onClick={() => {
+                  setPageNumber(numPages === pageNumber ? pageNumber : pageNumber + 1);
+                }}
+              >
+                {' '}
+                +
+              </button>
+              <button
+                className="px-[14px] py-[6px] bg-[#14532d] text-white rounded-[5px] ml-[7px]"
+                onClick={() => {
+                  setPageNumber(pageNumber === 1 ? pageNumber : pageNumber - 1);
+                }}
+              >
+                {' '}
+                -
+              </button>
+            </div>
+            <div className="flex flex-row items-center">
+              <p>페이지 스케일</p>
+              <button
+                className="px-[12px] py-[6px] bg-[#14532d] text-white rounded-[5px] ml-[7px]"
+                onClick={() => {
+                  setPageScale(pageScale === 3 ? 3 : pageScale + 0.1);
+                }}
+              >
+                {' '}
+                +
+              </button>
+              <button
+                className="px-[14px] py-[6px] bg-[#14532d] text-white rounded-[5px] ml-[7px]"
+                onClick={() => {
+                  setPageScale(pageScale - 1 < 1 ? 1 : pageScale - 1);
+                }}
+              >
+                {' '}
+                -
+              </button>
+            </div>
+          </div>
+          <div className="border-2">
+            <Recommend params={params.id} writerId={resumeList[0]?.user_uuid} pageAdoped={resumeList[0]?.isadopted} />
+          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
