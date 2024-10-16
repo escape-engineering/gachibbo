@@ -1,29 +1,10 @@
 'use client';
 
-import Button from '@/app/_components/common/Button';
-import Input from '@/app/_components/common/Input';
-import { EMPTY_EDU_OBJ, EMPTY_EXP_OBJ, EMPTY_LIC_OBJ } from '@/constants/resumeConstants';
-import useInput from '@/hooks/useInput';
 import browserClient from '@/utils/supabase/client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import '@/utils/resume/malgun-normal.js';
 import SideBarByPage from '@/app/_components/common/SideBarByPage';
-import { updatePdfToStorage, uploadPdfToStorage } from '@/utils/resume/client-actions';
-import {
-  getPostDetail,
-  getUserPoint,
-  updateResumeData,
-  updateTransformedData,
-  uploadResumeData,
-  uploadTransformedData
-} from '@/utils/resume/server-action';
-import { makeResumePdf } from '@/utils/resume/makeResumePdf';
-import { transformResumeData } from '@/services/resumeadd/resumeaddServices';
-import { EducationType, EduFormType, ExperienceType, ExpFormType, LicenseType, LicFormType } from '@/type/resumeTypes';
-import ProfileImgLabel from '@/app/_components/resumeadd/ProfileImgLabel';
-import EducationBox from '@/app/_components/resumeadd/EducationBox';
-import ExperienceBox from '@/app/_components/resumeadd/ExperienceBox';
-import LicenseBox from '@/app/_components/resumeadd/LicenseBox';
+import { getPostDetail } from '@/utils/resume/client-actions';
 import useResumeAddpage from '@/hooks/useResumeAddpage';
 import SideBarItem from '@/app/_components/resumeadd/SideBarItem';
 import ResumeTopSection from '@/app/_components/resumeadd/ResumeTopSection';
@@ -32,6 +13,7 @@ import EducationSection from '@/app/_components/resumeadd/EducationSection';
 import ExperienceSection from '@/app/_components/resumeadd/ExperienceSection';
 import LicenseSection from '@/app/_components/resumeadd/LicenseSection';
 import ResumeDescSection from '@/app/_components/resumeadd/ResumeDescSection';
+import CSRLoading from '@/app/_components/common/CSRLoading';
 interface Props {
   searchParams: {
     query_post_id?: string;
@@ -40,6 +22,7 @@ interface Props {
 
 const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
   const {
+    isLoading,
     openNewTabForPdf,
     handleUploadPdf,
     savePdfToLocal,
@@ -149,75 +132,64 @@ const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
     };
     !!query_post_id && getPostData();
   }, []);
-  const testLogin = async () => {
-    const { data, error } = await browserClient.auth.signInWithPassword({
-      email: 'yt@yt.com',
-      password: 'ytytyt'
-    });
-    if (error) {
-      console.log('error :>> ', error);
-    } else {
-      console.log('data :>> ', data);
-    }
-  };
-  const testLogout = async () => {
-    const { error } = await browserClient.auth.signOut();
-    if (error) {
-      console.log('error :>> ', error);
-    } else {
-      console.log('로그아웃 됨');
-    }
-  };
+
   return (
-    <div className="flex flex-row pl-[257px]">
-      <SideBarByPage>
-        <SideBarItem
-          queryString={query_post_id && query_post_id}
-          openNewTabForPdf={openNewTabForPdf}
-          handleUploadPdf={handleUploadPdf}
-          savePdfToLocal={savePdfToLocal}
-        />
-      </SideBarByPage>
-      <div className="flex flex-col justify-center items-center gap-[20px] py-[20px] w-[calc(100vw-303px)]">
-        <ResumeTopSection
-          title={title}
-          handleTitle={handleTitle}
-          titleRef={titleRef}
-          point={point}
-          handlePoint={handlePoint}
-          pointRef={pointRef}
-        />
-        <PersonalDataSection
-          profileImg={profileImg && profileImg}
-          handleProfileImg={handleProfileImg}
-          expYears={expYears}
-          handleExpYears={handleExpYears}
-          expYearsRef={expYearsRef}
-          name={name}
-          handleName={handleName}
-          nameRef={nameRef}
-          gender={gender}
-          handleGender={handleGender}
-          genderRef={genderRef}
-          email={email}
-          handleEmail={handleEmail}
-          emailRef={emailRef}
-          phoneNum={phoneNum}
-          handlePhoneNum={handlePhoneNum}
-          phoneNumRef={phoneNumRef}
-          region={region}
-          handleRegion={handleRegion}
-          regionRef={regionRef}
-          address={address}
-          handleAddress={handleAddress}
-          addressRef={addressRef}
-        />
-        <EducationSection addForm={addForm} eduArray={eduArray} deleteForm={deleteForm} setEduArray={setEduArray} />
-        <ExperienceSection addForm={addForm} expArray={expArray} deleteForm={deleteForm} setExpArray={setExpArray} />
-        <LicenseSection addForm={addForm} licArray={licArray} deleteForm={deleteForm} setLicArray={setLicArray} />
-        <ResumeDescSection resumeDesc={resumeDesc} handleResumeDesc={handleResumeDesc} resumeDescRef={resumeDescRef} />
+    <>
+      <CSRLoading isLoading={isLoading} />
+      <div className="flex flex-row pl-[257px]">
+        <SideBarByPage>
+          <SideBarItem
+            queryString={query_post_id ? query_post_id : undefined}
+            openNewTabForPdf={openNewTabForPdf}
+            handleUploadPdf={handleUploadPdf}
+            savePdfToLocal={savePdfToLocal}
+          />
+        </SideBarByPage>
+        <div className="flex flex-col justify-center items-center gap-[20px] py-[20px] w-[calc(100vw-303px)]">
+          <ResumeTopSection
+            title={title}
+            handleTitle={handleTitle}
+            titleRef={titleRef}
+            point={point}
+            handlePoint={handlePoint}
+            pointRef={pointRef}
+          />
+          <PersonalDataSection
+            profileImg={profileImg && profileImg}
+            handleProfileImg={handleProfileImg}
+            expYears={expYears}
+            handleExpYears={handleExpYears}
+            expYearsRef={expYearsRef}
+            name={name}
+            handleName={handleName}
+            nameRef={nameRef}
+            gender={gender}
+            handleGender={handleGender}
+            genderRef={genderRef}
+            email={email}
+            handleEmail={handleEmail}
+            emailRef={emailRef}
+            phoneNum={phoneNum}
+            handlePhoneNum={handlePhoneNum}
+            phoneNumRef={phoneNumRef}
+            region={region}
+            handleRegion={handleRegion}
+            regionRef={regionRef}
+            address={address}
+            handleAddress={handleAddress}
+            addressRef={addressRef}
+          />
+          <EducationSection addForm={addForm} eduArray={eduArray} deleteForm={deleteForm} setEduArray={setEduArray} />
+          <ExperienceSection addForm={addForm} expArray={expArray} deleteForm={deleteForm} setExpArray={setExpArray} />
+          <LicenseSection addForm={addForm} licArray={licArray} deleteForm={deleteForm} setLicArray={setLicArray} />
+          <ResumeDescSection
+            resumeDesc={resumeDesc}
+            handleResumeDesc={handleResumeDesc}
+            resumeDescRef={resumeDescRef}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
