@@ -4,6 +4,7 @@ import { EducationType, EduFormType, ExperienceType, ExpFormType, LicenseType, L
 import { EMPTY_EDU_OBJ, EMPTY_EXP_OBJ, EMPTY_LIC_OBJ } from '@/constants/resumeConstants';
 import { makeResumePdf } from '@/utils/resume/makeResumePdf';
 import {
+  getPostDetail,
   getUserPoint,
   updateResumeData,
   updateTransformedData,
@@ -210,6 +211,57 @@ const useResumeAddpage = () => {
     const doc = await makeResumePdf(profileImg, name, phoneNum, email, expArray, eduArray, licArray);
     doc.save(`${title ? title : '이력서'}`);
   };
+
+  const getUserId = async () => {
+    const { data: userSession, error: userSessionError } = await browserClient.auth.getSession();
+    if (userSessionError) {
+      console.log('userSessionError :>> ', userSessionError);
+    } else {
+      userSession.session && setUserId(userSession.session?.user.id);
+    }
+  };
+
+  const getPostData = async (query_post_id: string) => {
+    const { data: postData, error: postDataError } = await getPostDetail(query_post_id as string);
+    if (postDataError) {
+      console.log('postDataError :>> ', postDataError);
+      return;
+    } else if (postData) {
+      const {
+        eduArray,
+        expArray,
+        licArray,
+        post_id,
+        isadopted,
+        experience,
+        region,
+        post_title,
+        post_desc,
+        name,
+        gender,
+        phoneNum,
+        email,
+        address
+      } = postData[0];
+      //NOTE - state합치거나 하는 리팩토링 필요
+      setTitle(post_title);
+      setName(name);
+      setGender(gender);
+      setPhoneNum(phoneNum);
+      setEmail(email);
+      setAddress(address);
+      setRegion(region);
+      setExpYears(experience);
+      setResumeDesc(post_desc);
+      setPoint(point);
+      setPostId(post_id);
+      setIsadopted(isadopted);
+      setEduArray(eduArray);
+      setExpArray(expArray);
+      setLicArray(licArray);
+    }
+  };
+
   return {
     isLoading,
     openNewTabForPdf,
@@ -267,7 +319,9 @@ const useResumeAddpage = () => {
     setIsadopted,
     setEduArray,
     setExpArray,
-    setLicArray
+    setLicArray,
+    getPostData,
+    getUserId
   };
 };
 

@@ -1,10 +1,8 @@
 'use client';
 
-import browserClient from '@/utils/supabase/client';
 import React, { useEffect } from 'react';
 import '@/utils/resume/malgun-normal.js';
 import SideBarByPage from '@/app/_components/common/SideBarByPage';
-import { getPostDetail } from '@/utils/resume/client-actions';
 import useResumeAddpage from '@/hooks/useResumeAddpage';
 import SideBarItem from '@/app/_components/resumeadd/SideBarItem';
 import ResumeTopSection from '@/app/_components/resumeadd/ResumeTopSection';
@@ -63,74 +61,15 @@ const ResumeAddPage = ({ searchParams: { query_post_id } }: Props) => {
     resumeDesc,
     handleResumeDesc,
     resumeDescRef,
-    setUserId,
-    setTitle,
-    setName,
-    setGender,
-    setPhoneNum,
-    setEmail,
-    setAddress,
-    setRegion,
-    setExpYears,
-    setResumeDesc,
-    setPoint,
-    setPostId,
-    setIsadopted,
     setEduArray,
     setExpArray,
-    setLicArray
+    setLicArray,
+    getPostData,
+    getUserId
   } = useResumeAddpage();
   useEffect(() => {
-    const getUserId = async () => {
-      const { data: userSession, error: userSessionError } = await browserClient.auth.getSession();
-      if (userSessionError) {
-        console.log('userSessionError :>> ', userSessionError);
-      } else {
-        userSession.session && setUserId(userSession.session?.user.id);
-      }
-    };
     getUserId();
-    const getPostData = async () => {
-      const { data: postData, error: postDataError } = await getPostDetail(query_post_id as string);
-      if (postDataError) {
-        console.log('postDataError :>> ', postDataError);
-        return;
-      } else if (postData) {
-        const {
-          eduArray,
-          expArray,
-          licArray,
-          post_id,
-          isadopted,
-          experience,
-          region,
-          post_title,
-          post_desc,
-          name,
-          gender,
-          phoneNum,
-          email,
-          address
-        } = postData[0];
-        //NOTE - state합치거나 하는 리팩토링 필요
-        setTitle(post_title);
-        setName(name);
-        setGender(gender);
-        setPhoneNum(phoneNum);
-        setEmail(email);
-        setAddress(address);
-        setRegion(region);
-        setExpYears(experience);
-        setResumeDesc(post_desc);
-        setPoint(point);
-        setPostId(post_id);
-        setIsadopted(isadopted);
-        setEduArray(eduArray);
-        setExpArray(expArray);
-        setLicArray(licArray);
-      }
-    };
-    !!query_post_id && getPostData();
+    !!query_post_id && getPostData(query_post_id);
   }, []);
 
   return (
