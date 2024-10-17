@@ -36,11 +36,11 @@ const ResumePage = () => {
   }, [page, isMento]);
 
   return (
-    <div className="max-w-full my-[70px] mx-auto p-6 shadow-md">
+    <div className="max-w-full my-[70px] mx-auto p-[50px] shadow-md bg-white rounded-[20px]">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">이력서 목록</h1>
         <Link href="/resumeadd">
-          <button className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">이력서 추가</button>
+          <button className="px-4 py-2 bg-[#14532d] text-white rounded-md hover:bg-green-600">이력서 추가</button>
         </Link>
       </div>
 
@@ -48,12 +48,12 @@ const ResumePage = () => {
         <table className="min-w-full bg-white border border-gray-300">
           <thead>
             <tr className="bg-gray-200 border-b-2 border-gray-300">
-              <th className="py-4 px-6 text-center text-lg">제목</th>
+              <th className="py-4 px-6 text-center text-lg rounded-tl-[15px]">제목</th>
               <th className="py-4 px-6 text-center text-lg">희망지역</th>
               <th className="py-4 px-6 text-center text-lg">이메일</th>
               <th className="py-4 px-6 text-center text-lg">상태</th>
               <th className="py-4 px-6 text-center text-lg">포인트</th>
-              <th className="py-4 px-6 text-center text-lg">상세보기</th>
+              <th className="py-4 px-6 text-center text-lg rounded-tr-[15px]">상세보기</th>
             </tr>
           </thead>
           <tbody>

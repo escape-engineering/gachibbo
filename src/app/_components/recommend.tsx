@@ -6,7 +6,7 @@ import { CommentType } from '@/types/ResumeType';
 import browserClient from '@/utils/supabase/client';
 import useAuthStore from '@/store/useAuthStore';
 
-const recommend = ({ params, writerId }: { params: string; writerId: string }) => {
+const recommend = ({ params, writerId, pageAdoped }: { params: string; writerId: string; pageAdoped: boolean }) => {
   const supabase = createClient();
   const [comment, setComment] = useState<CommentType[]>([]);
   const [contents, setContents] = useState('');
@@ -173,35 +173,58 @@ const recommend = ({ params, writerId }: { params: string; writerId: string }) =
 
   return (
     <>
+      <form onSubmit={updateComment} className="mb-[30px]">
+        <div className="bg-[#14532d] rounded-[20px] p-10 flex flex-col justify-items-end items-end">
+          <textarea
+            className="textareaCss"
+            name="tuterComment"
+            placeholder="내용입력"
+            value={contents}
+            onChange={(e) => {
+              setContents(e.target.value);
+            }}
+          ></textarea>
+          <button
+            type="submit"
+            className="px-7 py-2 bg-[#ffa800] text-white rounded-[10px] hover:bg-green-600 text-[18px] mt-5"
+          >
+            제출
+          </button>
+        </div>
+      </form>
       <div>
         {comment.map((comment) => {
           return (
             <div key={comment.feedback_id} className="commentEach">
-              <img src={`${comment.image_url}`}/>
-              <p>{comment.feedback_desc}</p>
-              <p>{comment.user_name}</p>
-              <p>{comment.feedback_isSelected === true ? '채택완료' : ''}</p>
-              {writerId === userId && (
-                <div className="border-2">
-                  <button onClick={() => handleAdoption(comment.feedback_id)}>채택</button>
-                </div>
-              )}
+              <div>
+                <img src={`${comment.image_url}`} className="w-[40px] h-[40px] rounded-[25px] mr-5" />
+              </div>
+              <div>
+                <p className="font-bold">{comment.user_name}</p>
+                <p className="font-medium text-[12px]">
+                  {comment.write_date?.slice(0, 16).replaceAll('-', '.').replaceAll('T', '  ')}
+                </p>
+                <p className="whitespace-pre mt-[4px] w-[1200px] break-all text-wrap">{comment.feedback_desc}</p>
+
+                {pageAdoped === true && comment.feedback_isSelected === true && (
+                  <div className="px-5 py-2 bg-[#06603b] text-white rounded-[10px] text-[15px] mt-5">채택완료</div>
+                )}
+
+                {writerId === userId && pageAdoped === false && comment.feedback_isSelected === false && (
+                  <div>
+                    <button
+                      className="px-5 py-2 bg-[#06603b] text-white rounded-[10px] hover:bg-[#ffa800] text-[15px] mt-5"
+                      onClick={() => handleAdoption(comment.feedback_id)}
+                    >
+                      채택
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
       </div>
-      <form onSubmit={updateComment}>
-        <textarea
-          className="textareaCss"
-          name="tuterComment"
-          placeholder="내용입력"
-          value={contents}
-          onChange={(e) => {
-            setContents(e.target.value);
-          }}
-        ></textarea>
-        <button type="submit">제출</button>
-      </form>
     </>
   );
 };
