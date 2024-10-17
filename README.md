@@ -17,6 +17,13 @@
 + 장성현 : 기술 면접, 기술면접 결과 페이지
 + 유현지 : 이력서 게시글 목록, 게시글 상세 페이지
 
+## 0. 서비스 소개
+![10홈페이지](https://github.com/user-attachments/assets/92649e92-8f27-40e0-a2f4-01d1945c0eb1)
+![11이력서](https://github.com/user-attachments/assets/bccf08ad-c3e8-49e8-883c-2660ec1ebd52)
+![12기술면접](https://github.com/user-attachments/assets/24262a78-43f6-4639-880b-cb17f76223c1)
+![13포인트상점](https://github.com/user-attachments/assets/09042604-e5ca-47ce-bfa0-9bf2703ed7c1)
+![14회원](https://github.com/user-attachments/assets/045eb842-564b-4cb0-9f4f-3c5fc3b0fd1a)
+
 ## 1. 기술의사결정
 + `Zustand` : 클라이언트 상태 관리
 + `Next JS` : 데이터 캐싱 및 서버사이드 렌더링, SEO 최적화
