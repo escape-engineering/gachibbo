@@ -204,7 +204,7 @@ const recommend = ({ params, writerId, pageAdoped }: { params: string; writerId:
                 <p className="font-medium text-[12px]">
                   {comment.write_date?.slice(0, 16).replaceAll('-', '.').replaceAll('T', '  ')}
                 </p>
-                <p className="whitespace-pre mt-[4px]">{comment.feedback_desc}</p>
+                <p className="whitespace-pre mt-[4px] w-[1200px] break-all text-wrap">{comment.feedback_desc}</p>
 
                 {pageAdoped === true && comment.feedback_isSelected === true && (
                   <div className="px-5 py-2 bg-[#06603b] text-white rounded-[10px] text-[15px] mt-5">채택완료</div>
